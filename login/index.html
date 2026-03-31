@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>College Buddy – Login</title>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700;800&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet"/>
+<link rel="stylesheet" href="../common.css"/>
+<style>
+/* ── PAGE-SPECIFIC ──────────────────────────────── */
+body { display:flex; align-items:center; justify-content:center;
+       min-height:100vh; padding:1rem; }
+
+.login-wrap { width:100%; max-width:420px; }
+
+/* HERO CARD TOP */
+.login-hero {
+  background: linear-gradient(140deg,#1b3a5c 0%,#254e7a 50%,#1a5e38 100%);
+  border-radius:22px 22px 0 0; padding:2.2rem 1.5rem 2rem;
+  text-align:center; position:relative; overflow:hidden;
+}
+.login-hero::before {
+  content:''; position:absolute; inset:0;
+  background:radial-gradient(ellipse at 70% 20%,rgba(82,168,35,.18) 0%,transparent 60%);
+  pointer-events:none;
+}
+.login-hero::after {
+  content:'{ }'; position:absolute; font-family:'Sora',sans-serif; font-weight:800;
+  font-size:9rem; color:rgba(255,255,255,.04); right:-1.5rem; bottom:-2rem;
+  line-height:1; pointer-events:none;
+}
+.hero-logo {
+  height:60px; object-fit:contain; margin-bottom:.85rem;
+  filter:drop-shadow(0 4px 10px rgba(0,0,0,.22));
+}
+.online-pill {
+  display:inline-flex; align-items:center; gap:.38rem;
+  background:rgba(255,255,255,.12); border:1px solid rgba(255,255,255,.22);
+  border-radius:99px; padding:.26rem .85rem; margin-bottom:.7rem;
+}
+.online-dot { width:7px; height:7px; background:#4ade80; border-radius:50%;
+              animation:blink 2s infinite; flex-shrink:0; }
+@keyframes blink{ 0%,100%{opacity:1}50%{opacity:.3} }
+.online-pill span { font-size:.67rem; font-weight:700; color:rgba(255,255,255,.88);
+                    font-family:'Sora',sans-serif; letter-spacing:.04em; text-transform:uppercase; }
+.login-hero h1 { font-family:'Sora',sans-serif; font-weight:800;
+                  color:#fff; font-size:clamp(1.4rem,5vw,1.75rem); line-height:1.22; }
+.login-hero h1 em { color:var(--gold); font-style:normal; }
+.login-hero p { color:rgba(255,255,255,.58); font-size:.78rem; margin-top:.28rem; }
+
+/* BODY CARD */
+.login-body {
+  background:var(--white); border-radius:0 0 22px 22px;
+  padding:1.75rem 1.5rem; box-shadow:var(--shadow-lg);
+}
+
+/* FOOTER NOTE */
+.login-foot { text-align:center; font-size:.72rem; color:var(--faint); margin-top:.8rem; }
+</style>
+</head>
+<body>
+
+<div class="login-wrap">
+  <!-- HERO -->
+  <div class="login-hero">
+    <img src="./cbdlogo.png" alt="College Buddy" class="hero-logo"
+         onerror="this.outerHTML='<div style=\'font-family:Sora,sans-serif;font-weight:800;font-size:1.5rem;color:#fff;margin-bottom:.85rem\'>College<span style=\'color:#f5a623\'>Buddy</span></div>'"/>
+    <div class="online-pill">
+      <span class="online-dot"></span>
+      <span>College Buddy Platform</span>
+    </div>
+    <h1>Apna <em>Study</em> Portal 🎓</h1>
+    <p>Classes · Quiz · AI Chat — sab ek jagah</p>
+  </div>
+
+  <!-- BODY -->
+  <div class="login-body">
+    <div class="auth-tabs">
+      <div class="auth-tab active" id="tabLogin"    onclick="switchTab('login')">🔑 Login</div>
+      <div class="auth-tab"        id="tabRegister" onclick="switchTab('register')">📝 Register</div>
+    </div>
+
+    <!-- LOGIN FORM -->
+    <div id="loginForm">
+      <div class="field">
+        <label class="lbl">Mobile Number <span class="req">*</span></label>
+        <input type="tel" id="lMob" class="fi" placeholder="10-digit number" maxlength="10" inputmode="numeric"/>
+        <p class="et" id="eLMob">Valid 10-digit number chahiye.</p>
+      </div>
+      <div class="field" style="margin-bottom:1.1rem;">
+        <label class="lbl">Password <span class="req">*</span></label>
+        <input type="password" id="lPass" class="fi" placeholder="Apna password"/>
+        <p class="et" id="eLPass">Password required hai.</p>
+      </div>
+      <button class="btn btn-green" id="loginBtn" onclick="handleLogin()">
+        <div class="spin" id="loginSpin"></div>
+        <span id="loginTxt">Login &amp; Continue 🚀</span>
+      </button>
+      <p style="text-align:center;font-size:.75rem;color:var(--muted);margin-top:.75rem;">
+        Account nahi hai? <span class="link-text" onclick="switchTab('register')">Register karein →</span>
+      </p>
+    </div>
+
+    <!-- REGISTER FORM -->
+    <div id="registerForm" style="display:none;">
+      <div class="field">
+        <label class="lbl">Full Name <span class="req">*</span></label>
+        <input type="text" id="rName" class="fi" placeholder="Apna pura naam" autocomplete="name"/>
+        <p class="et" id="eRName">Naam required hai.</p>
+      </div>
+      <div class="field">
+        <label class="lbl">College <span class="req">*</span></label>
+        <select id="rCollege" class="fi">
+          <option value="">-- College Select Karein --</option>
+        </select>
+        <p class="et" id="eRCollege">College select karein.</p>
+      </div>
+      <div class="field">
+        <label class="lbl">Semester <span class="req">*</span></label>
+        <select id="rSem" class="fi">
+          <option value="">-- Semester --</option>
+          <option value="1">1st Semester</option>
+          <option value="2">2nd Semester</option>
+          <option value="3">3rd Semester</option>
+          <option value="4">4th Semester</option>
+          <option value="5">5th Semester</option>
+          <option value="6">6th Semester</option>
+        </select>
+        <p class="et" id="eRSem">Semester select karein.</p>
+      </div>
+      <div class="field">
+        <label class="lbl">Email <span class="req">*</span></label>
+        <input type="email" id="rEmail" class="fi" placeholder="example@gmail.com" inputmode="email"/>
+        <p class="et" id="eREmail">Valid email chahiye.</p>
+      </div>
+      <div class="field">
+        <label class="lbl">Mobile Number <span class="req">*</span></label>
+        <input type="tel" id="rMob" class="fi" placeholder="10-digit number" maxlength="10" inputmode="numeric"/>
+        <p class="et" id="eRMob">Valid 10-digit number chahiye.</p>
+      </div>
+      <div class="field" style="margin-bottom:1.1rem;">
+        <label class="lbl">Create Password <span class="req">*</span></label>
+        <input type="password" id="rPass" class="fi" placeholder="Min 6 characters"/>
+        <p class="et" id="eRPass">Min 6 character password chahiye.</p>
+      </div>
+      <button class="btn btn-green" id="registerBtn" onclick="handleRegister()">
+        <div class="spin" id="registerSpin"></div>
+        <span id="registerTxt">Register &amp; Continue 🚀</span>
+      </button>
+      <p style="text-align:center;font-size:.75rem;color:var(--muted);margin-top:.75rem;">
+        Already registered? <span class="link-text" onclick="switchTab('login')">Login karein →</span>
+      </p>
+    </div>
+  </div>
+
+  <p class="login-foot">© College Buddy — Quality education for Bihar 🙏</p>
+</div>
+
+<script src="../common.js"></script>
+<script>
+// ── Populate dropdowns ────────────────────────────
+const sel = document.getElementById('rCollege');
+COLLEGES.forEach(c => {
+  const o = document.createElement('option');
+  o.value = c; o.textContent = c; sel.appendChild(o);
+});
+
+// ── Redirect if already logged in ────────────────
+const _existing = getUser();
+if (_existing) {
+  const _next = new URLSearchParams(window.location.search).get('next');
+  window.location.href = _next || '../dashboard/';
+}
+
+// ── Shared error helpers ─────────────────────────
+const fe = (id,v) => document.getElementById(id).classList.toggle('err',v);
+const se = (id,v) => document.getElementById(id).style.display = v ? 'block' : 'none';
+
+// ── Tab switcher ─────────────────────────────────
+function switchTab(tab) {
+  const isLogin = tab === 'login';
+  document.getElementById('tabLogin').classList.toggle('active', isLogin);
+  document.getElementById('tabRegister').classList.toggle('active', !isLogin);
+  document.getElementById('loginForm').style.display    = isLogin ? 'block' : 'none';
+  document.getElementById('registerForm').style.display = isLogin ? 'none'  : 'block';
+}
+
+// ── Login ─────────────────────────────────────────
+async function handleLogin() {
+  const mob  = document.getElementById('lMob').value.trim();
+  const pass = document.getElementById('lPass').value.trim();
+  let ok = true;
+  if (!/^\d{10}$/.test(mob)) { fe('lMob',true);  se('eLMob',true);  ok=false; } else { fe('lMob',false);  se('eLMob',false); }
+  if (!pass)                  { fe('lPass',true); se('eLPass',true); ok=false; } else { fe('lPass',false); se('eLPass',false); }
+  if (!ok) return;
+
+  setBtnLoad('loginBtn','loginSpin','loginTxt',true);
+  try {
+    const data = await apiGet({ action:'loginUser', mobile:mob, password:pass });
+    if (data.status === 'ok') {
+      saveUser({ ...data.user, mobile:mob });
+      const next = new URLSearchParams(window.location.search).get('next');
+      window.location.href = next || '../dashboard/';
+    } else {
+      showToast(data.message || 'Wrong mobile or password', 'error');
+    }
+  } catch(_) { showToast('Network error. Try again.','error'); }
+  setBtnLoad('loginBtn','loginSpin','loginTxt',false);
+}
+
+// ── Register ──────────────────────────────────────
+async function handleRegister() {
+  const name    = document.getElementById('rName').value.trim();
+  const college = document.getElementById('rCollege').value;
+  const sem     = document.getElementById('rSem').value;
+  const email   = document.getElementById('rEmail').value.trim();
+  const mob     = document.getElementById('rMob').value.trim();
+  const pass    = document.getElementById('rPass').value.trim();
+  let ok = true;
+
+  if (!name)                                   { fe('rName',true);    se('eRName',true);    ok=false; } else { fe('rName',false);    se('eRName',false); }
+  if (!college)                                { fe('rCollege',true); se('eRCollege',true); ok=false; } else { fe('rCollege',false); se('eRCollege',false); }
+  if (!sem)                                    { fe('rSem',true);     se('eRSem',true);     ok=false; } else { fe('rSem',false);     se('eRSem',false); }
+  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)){ fe('rEmail',true);  se('eREmail',true);  ok=false; } else { fe('rEmail',false);  se('eREmail',false); }
+  if (!/^\d{10}$/.test(mob))                   { fe('rMob',true);     se('eRMob',true);     ok=false; } else { fe('rMob',false);     se('eRMob',false); }
+  if (pass.length < 6)                         { fe('rPass',true);    se('eRPass',true);    ok=false; } else { fe('rPass',false);    se('eRPass',false); }
+  if (!ok) return;
+
+  setBtnLoad('registerBtn','registerSpin','registerTxt',true);
+  try {
+    const params = new URLSearchParams({
+      action:'registerUser', name, college, semester:sem,
+      email, mobile:mob, password:pass,
+      timestamp: now(),
+    });
+    const res  = await fetch(SHEET_URL + '?' + params.toString());
+    const data = await res.json();
+    if (data.status === 'ok') {
+      saveUser({ name, college, semester:sem, email, mobile:mob,
+                 totalScore:0, classesAttended:0, quizPlayed:0, loginStreak:1 });
+      showToast('Registration successful! 🎉','success');
+      setTimeout(() => window.location.href = '../dashboard/', 900);
+    } else {
+      showToast(data.message || 'Registration failed.', 'error');
+    }
+  } catch(_) { showToast('Network error. Try again.','error'); }
+  setBtnLoad('registerBtn','registerSpin','registerTxt',false);
+}
+
+// ── Helper: btn loading state ─────────────────────
+function setBtnLoad(btnId, spinId, txtId, loading) {
+  document.getElementById(btnId).disabled       = loading;
+  document.getElementById(spinId).style.display = loading ? 'block' : 'none';
+  document.getElementById(txtId).style.display  = loading ? 'none'  : 'inline';
+}
+
+// ── Enter key support ─────────────────────────────
+document.addEventListener('keydown', e => {
+  if (e.key !== 'Enter') return;
+  const loginVisible = document.getElementById('loginForm').style.display !== 'none';
+  if (loginVisible) handleLogin();
+  else handleRegister();
+});
+</script>
+</body>
+</html>
