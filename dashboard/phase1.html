@@ -1,0 +1,907 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>College Buddy – Dashboard</title>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700;800&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet"/>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/marked/marked.min.js" as="script"/>
+<link rel="stylesheet" href="../common.css"/>
+<style>
+/* ═══ PAGE SHELL ═══════════════════════════════════ */
+body { padding-bottom: 0; }
+#app { display:none; }
+
+/* ═══ TOP NAV ══════════════════════════════════════ */
+.top-nav {
+  background:#fff; position:sticky; top:0; z-index:200;
+  box-shadow:0 2px 10px rgba(27,58,92,.08);
+  border-bottom:1.5px solid var(--border);
+}
+.top-nav-inner {
+  max-width:680px; margin:0 auto;
+  display:flex; align-items:center; gap:.6rem;
+  padding:.45rem 1rem;
+}
+.top-logo { height:36px; object-fit:contain; flex-shrink:0; }
+.top-name  { font-family:'Sora',sans-serif; font-weight:800; color:var(--navy);
+             font-size:.88rem; flex:1; }
+.top-streak { display:flex; align-items:center; gap:.3rem;
+              background:linear-gradient(135deg,#fff8e1,#fef3c7);
+              border:1.5px solid #fde68a; border-radius:99px;
+              padding:.22rem .65rem; font-size:.68rem; font-weight:700; color:#92400e; }
+
+/* ═══ SCREENS ══════════════════════════════════════ */
+.page { display:none; max-width:680px; margin:0 auto;
+        padding:1.1rem 1rem 5.5rem; animation:fadeUp .3s ease both; }
+.page.active { display:block; }
+@keyframes fadeUp{ from{opacity:0;transform:translateY(12px)} to{opacity:1;transform:translateY(0)} }
+
+/* ═══ BOTTOM NAV ═══════════════════════════════════ */
+.bottom-nav { position:fixed; bottom:0; left:0; right:0; z-index:300;
+              background:#fff; border-top:1.5px solid var(--border);
+              box-shadow:0 -4px 18px rgba(27,58,92,.09);
+              padding:.3rem 0 env(safe-area-inset-bottom,.35rem);
+              display:flex; justify-content:space-around; }
+.bn { display:flex; flex-direction:column; align-items:center; gap:.1rem;
+      flex:1; padding:.32rem .2rem; cursor:pointer;
+      color:var(--faint); transition:color .2s; border:none; background:none;
+      font-family:inherit; text-decoration:none; }
+.bn.active { color:var(--green); }
+.bn:hover { color:var(--navy); }
+.bn-ic { font-size:1.3rem; line-height:1; transition:transform .18s; }
+.bn.active .bn-ic { transform:translateY(-2px); }
+.bn-lb { font-size:.56rem; font-weight:700; letter-spacing:.03em;
+         text-transform:uppercase; font-family:'Sora',sans-serif; }
+
+/* ═══ HOME ════════════════════════════════════════ */
+.greet-card {
+  background:linear-gradient(135deg,#1b3a5c 0%,#254e7a 55%,#1a5e38 100%);
+  border-radius:20px; padding:1.5rem 1.2rem 1.3rem;
+  margin-bottom:1rem; position:relative; overflow:hidden;
+}
+.greet-card::after {
+  content:'👋'; position:absolute; font-size:5rem; right:-0.5rem;
+  bottom:-0.75rem; opacity:.12; pointer-events:none;
+}
+.greet-card h2 { font-family:'Sora',sans-serif; font-weight:800;
+                  color:#fff; font-size:1.2rem; }
+.greet-card h2 em { color:var(--gold); font-style:normal; }
+.greet-card p  { color:rgba(255,255,255,.6); font-size:.78rem; margin-top:.25rem; }
+.greet-stats   { display:grid; grid-template-columns:repeat(3,1fr);
+                  gap:.5rem; margin-top:.9rem; }
+.gs-box        { background:rgba(255,255,255,.1); border-radius:12px;
+                  padding:.6rem .4rem; text-align:center; }
+.gs-num        { font-family:'Sora',sans-serif; font-weight:800;
+                  color:var(--gold); font-size:1.45rem; line-height:1; }
+.gs-lbl        { font-size:.58rem; color:rgba(255,255,255,.6);
+                  font-weight:600; text-transform:uppercase;
+                  letter-spacing:.03em; margin-top:.08rem; }
+
+.quick-grid { display:grid; grid-template-columns:1fr 1fr; gap:.65rem; margin-bottom:1rem; }
+.quick-card {
+  background:#fff; border-radius:16px; padding:1.1rem 1rem;
+  box-shadow:var(--shadow); cursor:pointer; transition:transform .18s,box-shadow .18s;
+  display:flex; flex-direction:column; gap:.35rem;
+  text-decoration:none;
+}
+.quick-card:hover { transform:translateY(-2px); box-shadow:var(--shadow-lg); }
+.quick-card .qc-icon { font-size:1.7rem; }
+.quick-card .qc-title { font-family:'Sora',sans-serif; font-weight:800;
+                         color:var(--navy); font-size:.88rem; }
+.quick-card .qc-sub   { font-size:.7rem; color:var(--faint); line-height:1.4; }
+
+/* Upcoming class strip */
+.upcoming-strip {
+  background:linear-gradient(90deg,rgba(82,168,35,.08),rgba(27,58,92,.05));
+  border:1.5px solid rgba(82,168,35,.2); border-radius:14px;
+  padding:.85rem 1rem; display:flex; align-items:center; gap:.75rem;
+  cursor:pointer; margin-bottom:1rem; transition:border-color .2s;
+}
+.upcoming-strip:hover { border-color:var(--green); }
+.upcoming-dot { width:10px; height:10px; background:var(--green);
+                border-radius:50%; flex-shrink:0; animation:blink 2s infinite; }
+@keyframes blink{ 0%,100%{opacity:1}50%{opacity:.3} }
+.upcoming-strip .us-title { font-family:'Sora',sans-serif; font-weight:700;
+                              color:var(--navy); font-size:.85rem; }
+.upcoming-strip .us-meta  { font-size:.7rem; color:var(--muted); margin-top:.1rem; }
+.upcoming-strip .us-arrow { margin-left:auto; font-size:1rem; color:var(--muted); }
+
+/* ═══ CLASSES ═════════════════════════════════════ */
+.class-card {
+  background:#fff; border-radius:16px; box-shadow:var(--shadow);
+  overflow:hidden; margin-bottom:.75rem;
+  transition:transform .18s; cursor:default;
+}
+.class-card.completed { opacity:.8; }
+.class-hdr {
+  padding:.75rem 1rem; display:flex; align-items:center; gap:.65rem;
+}
+.class-hdr.upcoming  { background:linear-gradient(135deg,#1b3a5c,#254e7a); }
+.class-hdr.completed { background:linear-gradient(135deg,#3d8019,#2d6013); }
+.class-hdr.completed::after{ content:'✅ Completed'; position:absolute;
+  font-size:.6rem;font-weight:700;color:rgba(255,255,255,.7); }
+.ch-badge { background:rgba(255,255,255,.18); border-radius:8px;
+            padding:.2rem .5rem; font-size:.62rem; font-weight:700;
+            color:rgba(255,255,255,.9); font-family:'Sora',sans-serif; white-space:nowrap; }
+.ch-title { font-family:'Sora',sans-serif; font-weight:800; color:#fff;
+            font-size:.88rem; flex:1; }
+.ch-status { width:8px; height:8px; border-radius:50%; flex-shrink:0; }
+.ch-status.live { background:#4ade80; animation:blink 2s infinite; }
+.ch-status.done { background:rgba(255,255,255,.3); }
+.class-body { padding:.85rem 1rem .95rem; }
+.class-desc { font-size:.78rem; color:var(--muted); line-height:1.6; margin-bottom:.7rem; }
+.class-meta { display:flex; gap:.45rem; flex-wrap:wrap; margin-bottom:.75rem; }
+.c-meta-chip { display:inline-flex; align-items:center; gap:.28rem;
+               background:#f1f5f9; border-radius:99px; padding:.22rem .6rem;
+               font-size:.67rem; font-weight:600; color:var(--muted); }
+.class-actions { display:flex; gap:.5rem; }
+.class-actions .btn { padding:.56rem .8rem; font-size:.75rem; border-radius:9px;
+                       width:auto; flex:1; }
+
+.sem-filter { display:flex; gap:.38rem; overflow-x:auto; padding-bottom:.3rem;
+              margin-bottom:.85rem; }
+.sem-filter::-webkit-scrollbar{ display:none; }
+.sem-chip { background:#fff; border:1.5px solid var(--border);
+            border-radius:99px; padding:.3rem .75rem; font-size:.72rem;
+            font-weight:700; color:var(--muted); cursor:pointer;
+            transition:all .15s; white-space:nowrap; font-family:'Sora',sans-serif;
+            flex-shrink:0; }
+.sem-chip.active { background:var(--navy); border-color:var(--navy); color:#fff; }
+
+/* ═══ QUIZ LIST ════════════════════════════════════ */
+.quiz-list-card {
+  background:#fff; border-radius:16px; box-shadow:var(--shadow);
+  overflow:hidden; margin-bottom:.65rem;
+  display:flex; align-items:center; gap:.75rem; padding:.9rem 1rem;
+  cursor:pointer; transition:transform .18s,box-shadow .18s;
+  text-decoration:none;
+}
+.quiz-list-card:hover { transform:translateY(-2px); box-shadow:var(--shadow-lg); }
+.qlc-icon { width:44px; height:44px; border-radius:12px;
+            background:linear-gradient(135deg,var(--navy),var(--navy2));
+            display:flex; align-items:center; justify-content:center;
+            font-size:1.2rem; flex-shrink:0; }
+.qlc-info { flex:1; }
+.qlc-title { font-family:'Sora',sans-serif; font-weight:700;
+              color:var(--navy); font-size:.87rem; }
+.qlc-meta  { font-size:.68rem; color:var(--faint); margin-top:.1rem; }
+.qlc-badge { background:rgba(82,168,35,.1); color:var(--green2);
+              border-radius:99px; padding:.18rem .52rem;
+              font-size:.64rem; font-weight:700; white-space:nowrap; }
+
+/* ═══ CHAT ═════════════════════════════════════════ */
+#chatWrap {
+  display:flex; flex-direction:column;
+  height:calc(100vh - 56px - 57px); /* full height minus top+bottom nav */
+  position:fixed; top:56px; left:0; right:0; bottom:57px;
+  max-width:680px; margin:0 auto;
+  background:var(--bg); z-index:10;
+  display:none;
+}
+#chatWrap.active { display:flex; }
+#chatBox {
+  flex:1; overflow-y:auto; padding:1rem;
+  display:flex; flex-direction:column; gap:.6rem;
+}
+#chatBox::-webkit-scrollbar{ width:3px; }
+#chatBox::-webkit-scrollbar-thumb{ background:var(--border); border-radius:99px; }
+
+/* bubbles */
+.msg-row { display:flex; gap:.4rem; animation:fadeUp .22s ease; }
+.msg-row.user { flex-direction:row-reverse; }
+.msg-av { width:28px; height:28px; border-radius:50%; flex-shrink:0;
+          display:flex; align-items:center; justify-content:center;
+          font-size:.75rem; align-self:flex-end; margin-bottom:1.15rem; }
+.msg-row.bot  .msg-av { background:linear-gradient(135deg,var(--navy),var(--navy2)); }
+.msg-row.user .msg-av { background:linear-gradient(135deg,var(--green),var(--green2)); }
+.msg-col { display:flex; flex-direction:column; max-width:78%; }
+.msg-row.user .msg-col { align-items:flex-end; }
+.msg-bubble { padding:.65rem .9rem; border-radius:18px;
+              font-size:.82rem; line-height:1.65; box-shadow:0 1px 6px var(--shadow); }
+.msg-row.bot  .msg-bubble { background:#fff; color:var(--text); border-bottom-left-radius:4px; }
+.msg-row.user .msg-bubble { background:linear-gradient(135deg,var(--navy),var(--navy2));
+                              color:#fff; border-bottom-right-radius:4px; }
+.msg-bubble p{ margin-bottom:.3rem; }
+.msg-bubble p:last-child{ margin-bottom:0; }
+.msg-bubble strong{ font-weight:700; }
+.msg-bubble ul,.msg-bubble ol{ padding-left:1.1rem; margin:.2rem 0; }
+.msg-bubble li{ margin-bottom:.16rem; }
+.msg-bubble code{ background:rgba(82,168,35,.1); border-radius:5px;
+                  padding:.05rem .3rem; font-size:.77rem; font-family:monospace; }
+.msg-row.user .msg-bubble code{ background:rgba(255,255,255,.15); }
+.msg-bubble pre{ background:rgba(27,58,92,.06); border-radius:10px;
+                 padding:.5rem .7rem; overflow-x:auto; margin:.28rem 0; }
+.msg-bubble pre code{ background:none; padding:0; }
+.msg-time { font-size:.58rem; color:var(--faint); margin-top:.15rem; padding:0 .15rem; }
+.msg-row.user .msg-time { text-align:right; }
+
+.typing-bubble { background:#fff; border-radius:18px; border-bottom-left-radius:4px;
+                 padding:.6rem .8rem; box-shadow:0 1px 6px var(--shadow);
+                 display:flex; align-items:center; gap:.3rem; }
+.typing-dot { width:7px; height:7px; border-radius:50%; background:var(--faint);
+              animation:bounce 1.2s infinite ease-in-out; }
+.typing-dot:nth-child(2){ animation-delay:.18s; }
+.typing-dot:nth-child(3){ animation-delay:.36s; }
+@keyframes bounce{ 0%,80%,100%{transform:translateY(0)} 40%{transform:translateY(-5px)} }
+
+.date-sep { text-align:center; font-size:.6rem; font-weight:700; color:var(--faint);
+            letter-spacing:.05em; display:flex; align-items:center; gap:.4rem; margin:.05rem 0; }
+.date-sep::before,.date-sep::after { content:''; flex:1; height:1px; background:var(--border); }
+
+.sug-row { display:flex; gap:.35rem; flex-wrap:nowrap; overflow-x:auto;
+           padding:.35rem 1rem .25rem; }
+.sug-row::-webkit-scrollbar{ display:none; }
+.sug-chip { background:#fff; border:1.5px solid var(--border); border-radius:99px;
+            padding:.28rem .72rem; font-size:.68rem; font-weight:700;
+            color:var(--muted); cursor:pointer; white-space:nowrap;
+            font-family:'Sora',sans-serif; transition:all .15s; flex-shrink:0; }
+.sug-chip:hover { border-color:var(--green); color:var(--green2); }
+
+.chat-input-bar { background:#fff; border-top:1.5px solid var(--border);
+                  box-shadow:0 -3px 10px rgba(27,58,92,.07);
+                  padding:.55rem 1rem; }
+.chat-input-inner { max-width:680px; margin:0 auto;
+                    display:flex; gap:.42rem; align-items:flex-end; }
+#userInput {
+  flex:1; border:2px solid var(--border); border-radius:14px;
+  padding:.58rem .88rem; font-family:'DM Sans','Poppins',sans-serif;
+  font-size:.86rem; color:var(--text); background:#f8fafc; outline:none;
+  resize:none; max-height:110px; line-height:1.5;
+  transition:border-color .2s,box-shadow .2s;
+}
+#userInput::placeholder { color:var(--faint); }
+#userInput:focus { border-color:var(--green);
+                   box-shadow:0 0 0 3px rgba(82,168,35,.11); background:#fff; }
+.send-btn {
+  background:linear-gradient(135deg,var(--green),var(--green2));
+  border:none; border-radius:12px; width:42px; height:42px; flex-shrink:0;
+  cursor:pointer; display:flex; align-items:center; justify-content:center;
+  box-shadow:0 3px 10px rgba(82,168,35,.32); transition:transform .15s;
+}
+.send-btn:hover { transform:translateY(-1px); }
+.send-btn:disabled { opacity:.45; transform:none; cursor:not-allowed; }
+.send-btn svg { width:17px; height:17px; fill:#fff; }
+
+/* ═══ PROFILE ══════════════════════════════════════ */
+.profile-hero {
+  background:linear-gradient(135deg,#1b3a5c,#254e7a);
+  border-radius:20px; padding:1.6rem 1.2rem 1.4rem;
+  text-align:center; margin-bottom:1rem; position:relative; overflow:hidden;
+}
+.profile-hero::after {
+  content:'🎓'; position:absolute; font-size:6rem;
+  right:-0.5rem; bottom:-1rem; opacity:.08; pointer-events:none;
+}
+.p-avatar { width:68px; height:68px; border-radius:50%;
+            background:linear-gradient(135deg,var(--green),var(--green2));
+            display:flex; align-items:center; justify-content:center;
+            font-size:1.8rem; margin:0 auto .75rem;
+            box-shadow:0 4px 16px rgba(82,168,35,.4); }
+.p-name   { font-family:'Sora',sans-serif; font-weight:800; color:#fff; font-size:1.1rem; }
+.p-sub    { color:rgba(255,255,255,.6); font-size:.75rem; margin-top:.18rem; }
+.p-stats  { display:grid; grid-template-columns:repeat(3,1fr); gap:.5rem; margin-top:1rem; }
+.p-stat   { background:rgba(255,255,255,.1); border-radius:10px; padding:.55rem .4rem; text-align:center; }
+.p-stat-n { font-family:'Sora',sans-serif; font-weight:800; color:var(--gold); font-size:1.3rem; line-height:1; }
+.p-stat-l { font-size:.57rem; color:rgba(255,255,255,.6); font-weight:600;
+             text-transform:uppercase; letter-spacing:.03em; margin-top:.07rem; }
+.streak-badge {
+  display:inline-flex; align-items:center; gap:.38rem;
+  background:rgba(245,166,35,.15); border:1px solid rgba(245,166,35,.35);
+  border-radius:99px; padding:.3rem .85rem; margin-top:.65rem;
+  font-size:.72rem; font-weight:700; color:var(--gold);
+  font-family:'Sora',sans-serif;
+}
+
+.profile-section { background:#fff; border-radius:16px; box-shadow:var(--shadow);
+                    padding:1.1rem 1.1rem; margin-bottom:.8rem; }
+.ps-title { font-family:'Sora',sans-serif; font-weight:800; color:var(--navy);
+             font-size:.85rem; margin-bottom:.8rem; }
+.ps-row   { display:flex; align-items:center; gap:.6rem;
+             padding:.5rem 0; border-bottom:1px solid #f1f5f9; }
+.ps-row:last-child { border-bottom:none; padding-bottom:0; }
+.ps-icon  { width:32px; height:32px; border-radius:9px; background:#f1f5f9;
+             display:flex; align-items:center; justify-content:center;
+             font-size:.9rem; flex-shrink:0; }
+.ps-label { font-size:.8rem; color:var(--muted); flex:1; }
+.ps-value { font-size:.82rem; font-weight:600; color:var(--text); }
+</style>
+</head>
+<body>
+
+<!-- ── LOADING ─────────────────────────────────── -->
+<div id="loadingScreen" class="loading-screen" style="padding-top:6rem;">
+  <div class="loader"></div>
+  <div class="loader-text">College Buddy</div>
+  <div class="loader-sub">Loading your dashboard...</div>
+</div>
+
+<!-- ── APP SHELL ────────────────────────────────── -->
+<div id="app">
+  <!-- TOP NAV -->
+  <nav class="top-nav">
+    <div class="top-nav-inner">
+      <img src="../cbdlogo.png" alt="CB" class="top-logo"
+           onerror="this.style.display='none'"/>
+      <div class="top-name" id="topName">College Buddy</div>
+      <div class="top-streak" id="topStreak">🔥 1 day</div>
+    </div>
+  </nav>
+
+  <!-- ══ HOME PAGE ══════════════════════════════ -->
+  <div class="page active" id="pageHome">
+    <!-- Greeting card -->
+    <div class="greet-card">
+      <h2>Namaste, <em id="greetName">Student</em>! 👋</h2>
+      <p id="greetSub">Ready to learn something new today?</p>
+      <div class="greet-stats">
+        <div class="gs-box">
+          <div class="gs-num" id="hScore">0</div>
+          <div class="gs-lbl">Total Score</div>
+        </div>
+        <div class="gs-box">
+          <div class="gs-num" id="hQuiz">0</div>
+          <div class="gs-lbl">Quizzes</div>
+        </div>
+        <div class="gs-box">
+          <div class="gs-num" id="hClass">0</div>
+          <div class="gs-lbl">Classes</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Upcoming class strip (dynamically filled) -->
+    <div id="upcomingStrip" style="display:none;" class="upcoming-strip" onclick="goTab('classes')">
+      <div class="upcoming-dot"></div>
+      <div>
+        <div class="us-title" id="upTitle">Next Class</div>
+        <div class="us-meta"  id="upMeta">—</div>
+      </div>
+      <div class="us-arrow">›</div>
+    </div>
+
+    <!-- Quick actions -->
+    <div class="sec-title">Quick Access</div>
+    <div class="quick-grid">
+      <a class="quick-card" onclick="goTab('classes')">
+        <div class="qc-icon">🏫</div>
+        <div class="qc-title">Classes</div>
+        <div class="qc-sub">Live &amp; recorded sessions</div>
+      </a>
+      <a class="quick-card" onclick="goTab('quiz')">
+        <div class="qc-icon">📝</div>
+        <div class="qc-title">Quiz</div>
+        <div class="qc-sub">Test your knowledge</div>
+      </a>
+      <a class="quick-card" onclick="goTab('chat')">
+        <div class="qc-icon">🤖</div>
+        <div class="qc-title">My Buddy AI</div>
+        <div class="qc-sub">Ask anything 24/7</div>
+      </a>
+      <a class="quick-card" onclick="goTab('profile')">
+        <div class="qc-icon">👤</div>
+        <div class="qc-title">Profile</div>
+        <div class="qc-sub">Your stats &amp; progress</div>
+      </a>
+    </div>
+
+    <!-- Recent quizzes -->
+    <div class="sec-title" style="margin-top:.3rem;">Recent Quizzes</div>
+    <div id="homeQuizList"><div class="empty-state"><div class="ei">⏳</div>Loading...</div></div>
+  </div>
+
+  <!-- ══ CLASSES PAGE ════════════════════════════ -->
+  <div class="page" id="pageClasses">
+    <div class="sec-title">Your Classes</div>
+    <div class="sem-filter" id="classSemFilter">
+      <div class="sem-chip active" data-sem="all" onclick="filterClasses('all')">All</div>
+      <div class="sem-chip" data-sem="1" onclick="filterClasses('1')">Sem 1</div>
+      <div class="sem-chip" data-sem="2" onclick="filterClasses('2')">Sem 2</div>
+      <div class="sem-chip" data-sem="3" onclick="filterClasses('3')">Sem 3</div>
+      <div class="sem-chip" data-sem="4" onclick="filterClasses('4')">Sem 4</div>
+      <div class="sem-chip" data-sem="5" onclick="filterClasses('5')">Sem 5</div>
+      <div class="sem-chip" data-sem="6" onclick="filterClasses('6')">Sem 6</div>
+    </div>
+    <div id="classListCont"><div class="empty-state"><div class="ei">⏳</div>Loading...</div></div>
+  </div>
+
+  <!-- ══ QUIZ LIST PAGE ══════════════════════════ -->
+  <div class="page" id="pageQuiz">
+    <div class="sec-title">All Quizzes</div>
+    <div class="sem-filter" id="quizSemFilter">
+      <div class="sem-chip active" data-sem="all" onclick="filterQuizzes('all')">All</div>
+      <div class="sem-chip" data-sem="1" onclick="filterQuizzes('1')">Sem 1</div>
+      <div class="sem-chip" data-sem="2" onclick="filterQuizzes('2')">Sem 2</div>
+      <div class="sem-chip" data-sem="3" onclick="filterQuizzes('3')">Sem 3</div>
+      <div class="sem-chip" data-sem="4" onclick="filterQuizzes('4')">Sem 4</div>
+      <div class="sem-chip" data-sem="5" onclick="filterQuizzes('5')">Sem 5</div>
+      <div class="sem-chip" data-sem="6" onclick="filterQuizzes('6')">Sem 6</div>
+    </div>
+    <div id="quizListCont"><div class="empty-state"><div class="ei">⏳</div>Loading...</div></div>
+  </div>
+
+  <!-- ══ CHAT PAGE (full-screen overlay) ════════════ -->
+  <div id="chatWrap">
+    <div id="chatBox"></div>
+    <!-- Suggestions -->
+    <div id="sugWrap">
+      <div class="sug-row">
+        <div class="sug-chip" onclick="useSuggestion('DSA kya hota hai?')">📚 DSA kya hai?</div>
+        <div class="sug-chip" onclick="useSuggestion('Mujhe study tips do')">💡 Study tips</div>
+        <div class="sug-chip" onclick="useSuggestion('Array aur Linked List difference?')">🧠 Array vs List</div>
+        <div class="sug-chip" onclick="useSuggestion('Exam preparation tips chahiye')">🎯 Exam prep</div>
+        <div class="sug-chip" onclick="useSuggestion('Operating System kya hai?')">💻 OS kya hai?</div>
+        <div class="sug-chip" onclick="useSuggestion('Mujhe motivate karo!')">🔥 Motivate</div>
+      </div>
+    </div>
+    <!-- Input -->
+    <div class="chat-input-bar">
+      <div class="chat-input-inner">
+        <textarea id="userInput" rows="1"
+          placeholder="Kuch bhi pucho — Hindi, English, Hinglish..."></textarea>
+        <button class="send-btn" id="sendBtn" onclick="sendMessage()">
+          <svg viewBox="0 0 24 24"><path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/></svg>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ PROFILE PAGE ════════════════════════════ -->
+  <div class="page" id="pageProfile">
+    <div class="profile-hero">
+      <div class="p-avatar" id="pAvatar">😊</div>
+      <div class="p-name" id="pName">—</div>
+      <div class="p-sub"  id="pSub">—</div>
+      <div class="p-stats">
+        <div class="p-stat"><div class="p-stat-n" id="pScore">0</div><div class="p-stat-l">Score</div></div>
+        <div class="p-stat"><div class="p-stat-n" id="pQuiz">0</div><div class="p-stat-l">Quizzes</div></div>
+        <div class="p-stat"><div class="p-stat-n" id="pClass">0</div><div class="p-stat-l">Classes</div></div>
+      </div>
+      <div class="streak-badge" id="pStreak">🔥 1 day streak</div>
+    </div>
+
+    <div class="profile-section">
+      <div class="ps-title">👤 Account Info</div>
+      <div class="ps-row">
+        <div class="ps-icon">📛</div>
+        <div class="ps-label">Full Name</div>
+        <div class="ps-value" id="piName">—</div>
+      </div>
+      <div class="ps-row">
+        <div class="ps-icon">🏫</div>
+        <div class="ps-label">College</div>
+        <div class="ps-value" id="piCollege">—</div>
+      </div>
+      <div class="ps-row">
+        <div class="ps-icon">📚</div>
+        <div class="ps-label">Semester</div>
+        <div class="ps-value" id="piSem">—</div>
+      </div>
+      <div class="ps-row">
+        <div class="ps-icon">📱</div>
+        <div class="ps-label">Mobile</div>
+        <div class="ps-value" id="piMob">—</div>
+      </div>
+      <div class="ps-row">
+        <div class="ps-icon">📧</div>
+        <div class="ps-label">Email</div>
+        <div class="ps-value" id="piEmail">—</div>
+      </div>
+    </div>
+
+    <button class="btn btn-red" onclick="doLogout()" style="margin-bottom:.5rem;">
+      🚪 Logout
+    </button>
+  </div>
+
+  <!-- BOTTOM NAV -->
+  <nav class="bottom-nav">
+    <button class="bn active" id="bn-home"    onclick="goTab('home')">
+      <span class="bn-ic">🏠</span><span class="bn-lb">Home</span>
+    </button>
+    <button class="bn"        id="bn-classes" onclick="goTab('classes')">
+      <span class="bn-ic">🏫</span><span class="bn-lb">Classes</span>
+    </button>
+    <button class="bn"        id="bn-quiz"    onclick="goTab('quiz')">
+      <span class="bn-ic">📝</span><span class="bn-lb">Quiz</span>
+    </button>
+    <button class="bn"        id="bn-chat"    onclick="goTab('chat')">
+      <span class="bn-ic">🤖</span><span class="bn-lb">Chat</span>
+    </button>
+    <button class="bn"        id="bn-profile" onclick="goTab('profile')">
+      <span class="bn-ic">👤</span><span class="bn-lb">Profile</span>
+    </button>
+  </nav>
+</div>
+
+<!-- MARKED JS for chat markdown -->
+<script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+<script src="../common.js"></script>
+<script>
+// ═══════════════════════════════════════════════════
+//  STATE
+// ═══════════════════════════════════════════════════
+let user = null;
+let allClasses = [], allQuizzes = [];
+let chatHistory = [];
+let isBotTyping = false;
+let chatInited  = false;
+let suggestionsShown = true;
+const LS_CHAT = 'cb_chat_v3';
+
+// ═══════════════════════════════════════════════════
+//  BOOT
+// ═══════════════════════════════════════════════════
+window.addEventListener('DOMContentLoaded', async () => {
+  user = requireAuth('../login/');
+  if (!user) return;
+
+  fillUserUI(user);
+  document.getElementById('loadingScreen').style.display = 'none';
+  document.getElementById('app').style.display = 'block';
+
+  loadClasses();
+  loadQuizzes();
+
+  // Auto-select semester filter to user's semester
+  if (user.semester) {
+    const sem = String(user.semester);
+    document.querySelectorAll('[data-sem]').forEach(c => {
+      if (c.dataset.sem === sem) c.click();
+    });
+  }
+
+  // Setup chat textarea
+  const ta = document.getElementById('userInput');
+  ta.addEventListener('input', () => {
+    ta.style.height = 'auto';
+    ta.style.height = Math.min(ta.scrollHeight, 110) + 'px';
+  });
+  ta.addEventListener('keydown', e => {
+    if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendMessage(); }
+  });
+});
+
+// ═══════════════════════════════════════════════════
+//  FILL USER UI
+// ═══════════════════════════════════════════════════
+function fillUserUI(u) {
+  const first = (u.name || 'Student').split(' ')[0];
+  document.getElementById('greetName').textContent  = first;
+  document.getElementById('topName').textContent    = 'Hi, ' + first + ' 👋';
+  document.getElementById('topStreak').textContent  = '🔥 ' + (u.loginStreak || 1) + ' day' + ((u.loginStreak||1) > 1 ? 's':'');
+  document.getElementById('hScore').textContent     = u.totalScore     || 0;
+  document.getElementById('hQuiz').textContent      = u.quizPlayed     || 0;
+  document.getElementById('hClass').textContent     = u.classesAttended|| 0;
+  // profile
+  document.getElementById('pName').textContent      = u.name    || '—';
+  document.getElementById('pSub').textContent       = (u.college||'') + ' · Sem ' + (u.semester||'—');
+  document.getElementById('pScore').textContent     = u.totalScore      || 0;
+  document.getElementById('pQuiz').textContent      = u.quizPlayed      || 0;
+  document.getElementById('pClass').textContent     = u.classesAttended || 0;
+  document.getElementById('pStreak').textContent    = '🔥 ' + (u.loginStreak||1) + ' day streak';
+  document.getElementById('piName').textContent     = u.name     || '—';
+  document.getElementById('piCollege').textContent  = u.college  || '—';
+  document.getElementById('piSem').textContent      = u.semester ? 'Semester ' + u.semester : '—';
+  document.getElementById('piMob').textContent      = u.mobile   || '—';
+  document.getElementById('piEmail').textContent    = u.email    || '—';
+
+  // Avatar initial
+  const av = document.getElementById('pAvatar');
+  av.textContent = (u.name || 'S').charAt(0).toUpperCase();
+
+  // Greet sub
+  const h = new Date().getHours();
+  const greet = h < 12 ? 'Good morning' : h < 17 ? 'Good afternoon' : 'Good evening';
+  document.getElementById('greetSub').textContent = greet + ' — ready to learn something new today? 🚀';
+}
+
+// ═══════════════════════════════════════════════════
+//  TAB NAVIGATION
+// ═══════════════════════════════════════════════════
+function goTab(tab) {
+  // Pages
+  ['home','classes','quiz','profile'].forEach(t => {
+    document.getElementById('page' + t.charAt(0).toUpperCase() + t.slice(1))
+            ?.classList.toggle('active', t === tab);
+  });
+  // Chat overlay
+  const chatWrap = document.getElementById('chatWrap');
+  if (tab === 'chat') {
+    chatWrap.style.display = 'flex';
+    if (!chatInited) initChat();
+  } else {
+    chatWrap.style.display = 'none';
+  }
+  // Bottom nav
+  document.querySelectorAll('.bn').forEach(b => b.classList.remove('active'));
+  document.getElementById('bn-' + tab)?.classList.add('active');
+
+  window.scrollTo({ top:0, behavior:'smooth' });
+}
+
+// ═══════════════════════════════════════════════════
+//  CLASSES
+// ═══════════════════════════════════════════════════
+async function loadClasses() {
+  try {
+    const data = await apiGet({ action:'getClasses', semester:'all' });
+    allClasses = data.classes || [];
+    renderClasses('all');
+    // Show upcoming strip on home
+    const upcoming = allClasses.find(c => c.status === 'upcoming');
+    if (upcoming) {
+      document.getElementById('upcomingStrip').style.display = 'flex';
+      document.getElementById('upTitle').textContent = upcoming.title;
+      document.getElementById('upMeta').textContent  = upcoming.datetime + ' · ' + upcoming.teacher;
+    }
+  } catch(_) {
+    document.getElementById('classListCont').innerHTML =
+      '<div class="empty-state"><div class="ei">⚠️</div>Classes load nahi hue.</div>';
+  }
+}
+
+function filterClasses(sem) {
+  document.querySelectorAll('#classSemFilter .sem-chip').forEach(c =>
+    c.classList.toggle('active', c.dataset.sem === sem));
+  renderClasses(sem);
+}
+
+function renderClasses(sem) {
+  const cont = document.getElementById('classListCont');
+  const list = sem === 'all' ? allClasses : allClasses.filter(c => String(c.semester) === String(sem));
+  if (!list.length) {
+    cont.innerHTML = '<div class="empty-state"><div class="ei">📭</div>Is semester mein koi class nahi hai.</div>';
+    return;
+  }
+  cont.innerHTML = '';
+  list.forEach(c => {
+    const done = c.status === 'completed';
+    const el = document.createElement('div');
+    el.className = 'class-card' + (done ? ' completed' : '');
+    el.innerHTML = `
+      <div class="class-hdr ${done ? 'completed' : 'upcoming'}" style="position:relative;">
+        <span class="ch-badge">Sem ${esc(c.semester)}</span>
+        <span class="ch-title">${esc(c.title)}</span>
+        <span class="ch-status ${done ? 'done' : 'live'}"></span>
+      </div>
+      <div class="class-body">
+        ${c.desc ? `<div class="class-desc">${esc(c.desc)}</div>` : ''}
+        <div class="class-meta">
+          <span class="c-meta-chip">👨‍🏫 ${esc(c.teacher||'—')}</span>
+          <span class="c-meta-chip">📅 ${esc(c.datetime||'—')}</span>
+          ${done ? '<span class="c-meta-chip" style="background:rgba(82,168,35,.1);color:var(--green2);">✅ Completed</span>' : '<span class="c-meta-chip" style="background:rgba(245,166,35,.1);color:#92400e;">⏰ Upcoming</span>'}
+        </div>
+        <div class="class-actions">
+          ${c.link      ? `<a href="${esc(c.link)}" target="_blank" class="btn btn-green" style="padding:.54rem .7rem;font-size:.74rem;width:auto;flex:1;text-decoration:none;display:flex;align-items:center;justify-content:center;gap:.3rem;">📹 Join Class</a>` : ''}
+          ${c.recording ? `<a href="${esc(c.recording)}" target="_blank" class="btn btn-navy" style="padding:.54rem .7rem;font-size:.74rem;width:auto;flex:1;text-decoration:none;display:flex;align-items:center;justify-content:center;gap:.3rem;">🎬 Recording</a>` : ''}
+        </div>
+      </div>`;
+    cont.appendChild(el);
+  });
+}
+
+// ═══════════════════════════════════════════════════
+//  QUIZZES
+// ═══════════════════════════════════════════════════
+async function loadQuizzes() {
+  try {
+    const data = await apiGet({ action:'getAllQuizzes', semester:'all' });
+    allQuizzes = data.quizzes || [];
+    renderQuizzes('all');
+    // Render recent 3 on home
+    const cont = document.getElementById('homeQuizList');
+    cont.innerHTML = '';
+    allQuizzes.slice(0, 3).forEach(q => cont.appendChild(buildQuizCard(q)));
+    if (!allQuizzes.length) cont.innerHTML = '<div class="empty-state"><div class="ei">📭</div>Koi quiz available nahi hai.</div>';
+  } catch(_) {
+    document.getElementById('quizListCont').innerHTML =
+      '<div class="empty-state"><div class="ei">⚠️</div>Quizzes load nahi hue.</div>';
+  }
+}
+
+function filterQuizzes(sem) {
+  document.querySelectorAll('#quizSemFilter .sem-chip').forEach(c =>
+    c.classList.toggle('active', c.dataset.sem === sem));
+  renderQuizzes(sem);
+}
+
+function renderQuizzes(sem) {
+  const cont = document.getElementById('quizListCont');
+  const list = sem === 'all' ? allQuizzes : allQuizzes.filter(q => String(q.semester) === String(sem));
+  if (!list.length) {
+    cont.innerHTML = '<div class="empty-state"><div class="ei">📭</div>Is semester mein koi quiz nahi hai.</div>';
+    return;
+  }
+  cont.innerHTML = '';
+  list.forEach(q => cont.appendChild(buildQuizCard(q)));
+}
+
+function buildQuizCard(q) {
+  const el = document.createElement('a');
+  el.className = 'quiz-list-card';
+  el.href = '../play/?q=' + enc(q.path || q.title);
+  el.innerHTML = `
+    <div class="qlc-icon">📝</div>
+    <div class="qlc-info">
+      <div class="qlc-title">${esc(q.title)}</div>
+      <div class="qlc-meta">Sem ${esc(q.semester)} · ${q.plays || 0} plays</div>
+    </div>
+    <span class="qlc-badge">Start →</span>`;
+  return el;
+}
+
+// ═══════════════════════════════════════════════════
+//  CHAT
+// ═══════════════════════════════════════════════════
+function initChat() {
+  chatInited = true;
+  try {
+    const saved = localStorage.getItem(LS_CHAT);
+    chatHistory = saved ? JSON.parse(saved) : [];
+  } catch(_) { chatHistory = []; }
+
+  const box = document.getElementById('chatBox');
+  box.innerHTML = '';
+  appendDateSep('Today');
+
+  if (chatHistory.length > 0) {
+    chatHistory.forEach(m => {
+      if (m.role === 'user') appendUserBubble(m.content, false);
+      else appendBotBubble(m.content, false);
+    });
+    document.getElementById('sugWrap').style.display = 'none';
+    suggestionsShown = false;
+    scrollChatBottom();
+  } else {
+    // Welcome bubble
+    const first = (user?.name || 'Student').split(' ')[0];
+    const wb = document.createElement('div');
+    wb.className = 'msg-row bot';
+    wb.style.animation = 'none';
+    wb.innerHTML = `
+      <div class="msg-av">🤖</div>
+      <div class="msg-col">
+        <div class="msg-bubble">
+          <strong>Namaste ${esc(first)}! 👋</strong><br>
+          Main hoon <strong>My Buddy</strong> — tera AI study dost!<br>
+          Koi bhi subject pucho — DSA, OS, DBMS, Math ya kuch aur 😊<br>
+          <em style="font-size:.75rem;opacity:.7">Hindi · English · Hinglish</em>
+        </div>
+        <div class="msg-time">${timeNow()}</div>
+      </div>`;
+    box.appendChild(wb);
+    document.getElementById('sugWrap').style.display = 'block';
+  }
+}
+
+async function sendMessage() {
+  if (isBotTyping) return;
+  const ta  = document.getElementById('userInput');
+  const msg = ta.value.trim();
+  if (!msg) return;
+
+  if (suggestionsShown) {
+    document.getElementById('sugWrap').style.display = 'none';
+    suggestionsShown = false;
+  }
+
+  ta.value = ''; ta.style.height = 'auto';
+  appendUserBubble(msg, true);
+  chatHistory.push({ role:'user', content:msg });
+  saveChatHistory();
+
+  // Log to sheet (fire and forget)
+  apiPostNC({ action:'logChat', mobile:user?.mobile||'', name:user?.name||'', message:msg, timestamp:now() });
+
+  const typingId = 't' + Date.now();
+  appendTyping(typingId);
+  isBotTyping = true;
+  document.getElementById('sendBtn').disabled = true;
+
+  try {
+    const messages = [
+      { role:'user',      content: AI_SYSTEM_PROMPT + '\n\nStudent name: ' + (user?.name||'').split(' ')[0] },
+      { role:'assistant', content:'Understood! I will reply in the exact same language as the user.' },
+      ...chatHistory.slice(-18),
+    ];
+    const res  = await fetch(SHEET_URL + '?action=aiChat&messages=' + enc(JSON.stringify(messages)));
+    const data = await res.json();
+    document.getElementById(typingId)?.remove();
+    const reply = data.reply || '⚠️ Kuch problem aayi. Dobara try karo!';
+    chatHistory.push({ role:'assistant', content:reply });
+    saveChatHistory();
+    appendBotBubble(reply, true);
+  } catch(_) {
+    document.getElementById(typingId)?.remove();
+    appendBotBubble('⚠️ Network error. Internet check karo aur dobara try karo.', true);
+  }
+
+  isBotTyping = false;
+  document.getElementById('sendBtn').disabled = false;
+  document.getElementById('userInput').focus();
+}
+
+function saveChatHistory() {
+  try { localStorage.setItem(LS_CHAT, JSON.stringify(chatHistory)); } catch(_) {}
+}
+
+function appendUserBubble(text, animate) {
+  const box = document.getElementById('chatBox');
+  const row = document.createElement('div');
+  row.className = 'msg-row user';
+  if (!animate) row.style.animation = 'none';
+  row.innerHTML = `
+    <div class="msg-av">😊</div>
+    <div class="msg-col">
+      <div class="msg-bubble">${esc(text)}</div>
+      <div class="msg-time">${timeNow()}</div>
+    </div>`;
+  box.appendChild(row);
+  if (animate) scrollChatBottom();
+}
+
+function appendBotBubble(text, animate) {
+  const box = document.getElementById('chatBox');
+  const row = document.createElement('div');
+  row.className = 'msg-row bot';
+  if (!animate) row.style.animation = 'none';
+  row.innerHTML = `
+    <div class="msg-av">🤖</div>
+    <div class="msg-col">
+      <div class="msg-bubble">${marked.parse(text)}</div>
+      <div class="msg-time">${timeNow()}</div>
+    </div>`;
+  box.appendChild(row);
+  if (animate) scrollChatBottom();
+}
+
+function appendTyping(id) {
+  const box = document.getElementById('chatBox');
+  const row = document.createElement('div');
+  row.className = 'msg-row bot'; row.id = id;
+  row.innerHTML = `
+    <div class="msg-av">🤖</div>
+    <div class="typing-bubble">
+      <div class="typing-dot"></div><div class="typing-dot"></div><div class="typing-dot"></div>
+    </div>`;
+  box.appendChild(row);
+  scrollChatBottom();
+}
+
+function appendDateSep(label) {
+  const el = document.createElement('div');
+  el.className = 'date-sep';
+  el.innerHTML = `<span>${label}</span>`;
+  document.getElementById('chatBox').appendChild(el);
+}
+
+function useSuggestion(text) {
+  document.getElementById('userInput').value = text;
+  sendMessage();
+}
+
+function scrollChatBottom() {
+  const cb = document.getElementById('chatBox');
+  setTimeout(() => cb.scrollTo({ top:cb.scrollHeight, behavior:'smooth' }), 60);
+}
+
+// ═══════════════════════════════════════════════════
+//  PROFILE / LOGOUT
+// ═══════════════════════════════════════════════════
+function doLogout() {
+  if (!confirm('Logout karna chahte ho?')) return;
+  clearUser();
+  localStorage.removeItem(LS_CHAT);
+  window.location.href = '../login/';
+}
+
+// ═══════════════════════════════════════════════════
+//  UTILS
+// ═══════════════════════════════════════════════════
+function timeNow() {
+  return new Date().toLocaleTimeString('en-IN',{ hour:'2-digit', minute:'2-digit' });
+}
+</script>
+</body>
+</html>
