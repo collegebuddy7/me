@@ -7,82 +7,22 @@
 <link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700;800&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet"/>
 <link rel="stylesheet" href="../common.css"/>
 <style>
-/* ═══════════════════════════════════════════════
-   LAYOUT — Mobile bottom nav / Desktop left nav
-═══════════════════════════════════════════════ */
+/* ════════════════════════════════════════════════
+   SHELL
+════════════════════════════════════════════════ */
 body { padding-bottom: 0; background: var(--bg); }
 #app { display:none; }
 
-/* ── DESKTOP SHELL ─────────────────────────────── */
-@media(min-width:768px){
-  body { display:flex; min-height:100vh; }
-
-  /* Left sidebar — nav buttons only, no logo */
-  .bottom-nav {
-    position:fixed; left:0; top:0; bottom:0; right:auto;
-    width:64px; height:100vh;
-    flex-direction:column; justify-content:flex-start;
-    border-top:none; border-right:1.5px solid var(--border);
-    box-shadow:2px 0 18px rgba(27,58,92,.08);
-    padding:1rem 0; gap:.25rem;
-    z-index:200;
-  }
-
-  /* Push main content right */
-  #app { margin-left:64px; width:calc(100% - 64px); }
-
-  /* Top nav full-width after sidebar */
-  .top-nav { left:64px; right:0; width:auto; }
-
-  /* Sidebar nav items */
-  .bn {
-    flex-direction:column; width:100%; padding:.7rem 0;
-    border-radius:0; position:relative;
-    border-left:3px solid transparent;
-    transition:background .15s, border-color .15s, color .15s;
-  }
-  .bn.active {
-    border-left-color:var(--green);
-    background:rgba(82,168,35,.07);
-    color:var(--green);
-  }
-  .bn:hover:not(.active) {
-    background:rgba(27,58,92,.05);
-    color:var(--navy);
-  }
-  .bn-lb { display:none; }
-
-  /* Tooltip */
-  .bn::after {
-    content: attr(data-label);
-    position:absolute; left:calc(100% + 10px); top:50%;
-    transform:translateY(-50%);
-    background:var(--navy); color:#fff;
-    font-family:'Sora',sans-serif; font-weight:700; font-size:.72rem;
-    padding:.28rem .65rem; border-radius:7px; white-space:nowrap;
-    opacity:0; pointer-events:none; transition:opacity .15s;
-    z-index:999;
-  }
-  .bn:hover::after { opacity:1; }
-
-  /* Pages full-width on desktop */
-  .page { max-width:760px; padding:1.2rem 1.5rem 3rem; }
-  #chatWrap { left:64px; max-width:none; }
-
-  /* Chat input bar wider */
-  .chat-input-inner { max-width:760px; }
-}
-
-/* ═══════════════════════════════════════════════
+/* ════════════════════════════════════════════════
    TOP NAV
-═══════════════════════════════════════════════ */
+════════════════════════════════════════════════ */
 .top-nav {
   background:#fff; position:sticky; top:0; z-index:200;
   box-shadow:0 2px 10px rgba(27,58,92,.08);
   border-bottom:1.5px solid var(--border);
 }
 .top-nav-inner {
-  max-width:760px; margin:0 auto;
+  max-width:680px; margin:0 auto;
   display:flex; align-items:center; gap:.6rem;
   padding:.45rem 1rem;
 }
@@ -97,9 +37,9 @@ body { padding-bottom: 0; background: var(--bg); }
   white-space:nowrap;
 }
 
-/* ═══════════════════════════════════════════════
+/* ════════════════════════════════════════════════
    PAGES
-═══════════════════════════════════════════════ */
+════════════════════════════════════════════════ */
 .page {
   display:none; max-width:680px; margin:0 auto;
   padding:1.1rem 1rem 5.8rem;
@@ -108,12 +48,12 @@ body { padding-bottom: 0; background: var(--bg); }
 .page.active { display:block; }
 @keyframes fadeUp { from{opacity:0;transform:translateY(12px)} to{opacity:1;transform:translateY(0)} }
 
-/* ═══════════════════════════════════════════════
-   BOTTOM NAV (mobile)
-═══════════════════════════════════════════════ */
+/* ════════════════════════════════════════════════
+   BOTTOM NAV — SVG ICONS, FIX Z-INDEX
+════════════════════════════════════════════════ */
 .bottom-nav {
   position:fixed; bottom:0; left:0; right:0;
-  z-index:9999;
+  z-index:9999; /* FIX Change 1: higher than chat */
   background:#fff;
   border-top:1.5px solid var(--border);
   box-shadow:0 -4px 18px rgba(27,58,92,.09);
@@ -137,9 +77,9 @@ body { padding-bottom: 0; background: var(--bg); }
   font-family:'Sora',sans-serif;
 }
 
-/* ═══════════════════════════════════════════════
+/* ════════════════════════════════════════════════
    HOME — GREETING CARD
-═══════════════════════════════════════════════ */
+════════════════════════════════════════════════ */
 .greet-card {
   background:linear-gradient(135deg,#1b3a5c 0%,#254e7a 55%,#1a5e38 100%);
   border-radius:20px; padding:1.2rem 1.2rem 1.1rem;
@@ -156,6 +96,7 @@ body { padding-bottom: 0; background: var(--bg); }
 .greet-card h2 em { color:var(--gold); font-style:normal; }
 .greet-card p { color:rgba(255,255,255,.6); font-size:.77rem; margin-top:.18rem; }
 
+/* Greet stats — new layout: Ref Count (big left) + Quiz/Class (right) */
 .greet-stats-new {
   display:grid; grid-template-columns:1fr 1fr;
   gap:.5rem; margin-top:.9rem;
@@ -188,9 +129,9 @@ body { padding-bottom: 0; background: var(--bg); }
   font-weight:600; text-transform:uppercase; letter-spacing:.03em; margin-top:.06rem;
 }
 
-/* ═══════════════════════════════════════════════
+/* ════════════════════════════════════════════════
    QUICK GRID
-═══════════════════════════════════════════════ */
+════════════════════════════════════════════════ */
 .quick-grid {
   display:grid; grid-template-columns:1fr 1fr;
   gap:.6rem; margin-bottom:.9rem;
@@ -218,117 +159,96 @@ body { padding-bottom: 0; background: var(--bg); }
 }
 .qc-sub { font-size:.68rem; color:var(--faint); line-height:1.35; }
 
-/* ═══════════════════════════════════════════════
-   MY REFERRALS LIST (Home tab)
-═══════════════════════════════════════════════ */
-.ref-list-section { margin-bottom:.9rem; }
-.ref-list-header {
-  display:flex; align-items:center; justify-content:space-between;
-  margin-bottom:.55rem;
+/* ════════════════════════════════════════════════
+   REFERRAL CARD
+════════════════════════════════════════════════ */
+.ref-card {
+  background:#fff; border-radius:16px; box-shadow:var(--shadow);
+  padding:1rem 1.1rem; margin-bottom:.9rem;
+  border:1.5px solid rgba(245,166,35,.2);
 }
-.ref-list-title {
-  font-family:'Sora',sans-serif; font-weight:800;
-  color:var(--navy); font-size:.88rem;
-  display:flex; align-items:center; gap:.4rem;
+.ref-card-top {
+  display:flex; align-items:center; gap:.6rem; margin-bottom:.75rem;
 }
-.ref-count-badge {
+.ref-card-icon {
+  width:38px; height:38px; border-radius:10px;
   background:linear-gradient(135deg,var(--gold),#e8921a);
-  color:#fff; font-family:'Sora',sans-serif; font-weight:800;
-  font-size:.62rem; padding:.15rem .45rem; border-radius:99px;
+  display:flex; align-items:center; justify-content:center; flex-shrink:0;
 }
-.ref-empty {
-  background:#fff; border-radius:14px; padding:1.2rem;
-  text-align:center; box-shadow:var(--shadow);
-  border:2px dashed var(--border);
+.ref-card-icon svg { width:18px; height:18px; fill:#fff; }
+.ref-card-title {
+  font-family:'Sora',sans-serif; font-weight:800;
+  color:var(--navy); font-size:.9rem;
 }
-.ref-empty .ei { font-size:1.8rem; margin-bottom:.3rem; }
-.ref-empty p { font-size:.74rem; color:var(--faint); }
-
-.ref-cards-grid { display:flex; flex-direction:column; gap:.4rem; }
-.ref-student-card {
-  background:#fff; border-radius:13px; padding:.7rem .9rem;
-  box-shadow:0 2px 12px rgba(27,58,92,.07);
-  display:flex; align-items:center; gap:.7rem;
-  border-left:3px solid var(--green);
-  animation:fadeUp .25s ease both;
+.ref-card-sub { font-size:.7rem; color:var(--muted); }
+.ref-code-row {
+  display:flex; align-items:center; gap:.5rem; margin-bottom:.65rem;
 }
-.ref-av {
-  width:36px; height:36px; border-radius:50%; flex-shrink:0;
-  background:linear-gradient(135deg,var(--green),var(--green2));
-  display:flex; align-items:center; justify-content:center;
-  font-family:'Sora',sans-serif; font-weight:800; color:#fff; font-size:.85rem;
+.ref-code-box {
+  flex:1; background:var(--bg); border:2px dashed var(--border);
+  border-radius:10px; padding:.55rem .9rem;
+  font-family:'Sora',sans-serif; font-weight:800;
+  color:var(--navy); font-size:1.05rem; letter-spacing:.08em;
+  text-transform:uppercase;
 }
-.ref-info { flex:1; min-width:0; }
-.ref-student-name {
-  font-family:'Sora',sans-serif; font-weight:700;
-  color:var(--navy); font-size:.83rem;
-  white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
-}
-.ref-student-college { font-size:.66rem; color:var(--faint); margin-top:.06rem;
-  white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
-.ref-joined-badge {
-  font-size:.58rem; background:rgba(82,168,35,.1); color:var(--green2);
-  border-radius:99px; padding:.12rem .4rem; font-weight:700;
-  white-space:nowrap; flex-shrink:0;
-}
-
-/* ═══════════════════════════════════════════════
-   REFERRAL SHARE CARD (compact)
-═══════════════════════════════════════════════ */
-.ref-share-card {
-  background:linear-gradient(135deg,#1b3a5c,#254e7a);
-  border-radius:16px; padding:.9rem 1rem; margin-bottom:.9rem;
-  display:flex; align-items:center; gap:.8rem;
-}
-.ref-share-icon {
-  width:40px; height:40px; border-radius:11px;
-  background:rgba(255,255,255,.12); flex-shrink:0;
-  display:flex; align-items:center; justify-content:center;
-}
-.ref-share-icon svg { width:20px; height:20px; fill:var(--gold); }
-.ref-share-info { flex:1; }
-.ref-share-code {
-  font-family:'Sora',sans-serif; font-weight:800; color:var(--gold);
-  font-size:1rem; letter-spacing:.08em; text-transform:uppercase;
-}
-.ref-share-sub { font-size:.66rem; color:rgba(255,255,255,.55); margin-top:.05rem; }
-.ref-share-btns { display:flex; gap:.4rem; flex-shrink:0; }
-.btn-copy-sm {
-  border:none; background:rgba(255,255,255,.15); color:#fff;
-  border-radius:8px; padding:.38rem .62rem;
-  font-family:'Sora',sans-serif; font-weight:700; font-size:.7rem;
+.btn-copy {
+  border:none; background:var(--navy); color:#fff;
+  border-radius:9px; padding:.52rem .85rem;
+  font-family:'Sora',sans-serif; font-weight:700; font-size:.75rem;
   cursor:pointer; transition:all .15s; white-space:nowrap;
 }
-.btn-copy-sm:hover { background:rgba(255,255,255,.25); }
-.btn-copy-sm.copied { background:var(--green); }
-.btn-wa-sm {
-  border:none; background:#25d366; color:#fff;
-  border-radius:8px; padding:.38rem .62rem;
-  font-family:'Sora',sans-serif; font-weight:700; font-size:.7rem;
-  cursor:pointer; transition:all .15s;
+.btn-copy:hover { background:var(--navy2); transform:translateY(-1px); }
+.btn-copy.copied { background:var(--green); }
+.btn-share-ref {
+  width:100%; border:none; border-radius:10px;
+  background:linear-gradient(135deg,#25d366,#128c7e);
+  color:#fff; padding:.62rem; font-family:'Sora',sans-serif;
+  font-weight:700; font-size:.82rem; cursor:pointer;
+  display:flex; align-items:center; justify-content:center; gap:.4rem;
+  transition:transform .15s; box-shadow:0 3px 10px rgba(37,211,102,.3);
 }
-.btn-wa-sm:hover { background:#20b858; }
+.btn-share-ref:hover { transform:translateY(-1px); }
 
-/* ═══════════════════════════════════════════════
-   SUBJECT FILTER ONLY (semester chips removed)
-═══════════════════════════════════════════════ */
-.filter-row {
-  display:flex; gap:.38rem; overflow-x:auto;
-  padding-bottom:.3rem; margin-bottom:.55rem;
+/* Referral list */
+.ref-list { margin-top:.7rem; display:flex; flex-direction:column; gap:.35rem; }
+.ref-item {
+  background:linear-gradient(135deg,var(--navy),var(--navy2));
+  border-radius:10px; padding:.6rem .85rem;
+  display:flex; align-items:center; gap:.55rem;
 }
-.filter-row::-webkit-scrollbar{ display:none; }
-.filter-chip {
+.ref-item-av {
+  width:28px; height:28px; border-radius:50%;
+  background:rgba(255,255,255,.2); display:flex;
+  align-items:center; justify-content:center;
+  font-family:'Sora',sans-serif; font-weight:800;
+  color:#fff; font-size:.75rem; flex-shrink:0;
+}
+.ref-item-name {
+  font-family:'Sora',sans-serif; font-weight:700;
+  color:#fff; font-size:.8rem; flex:1;
+}
+.ref-item-college { font-size:.65rem; color:rgba(255,255,255,.5); }
+
+/* ════════════════════════════════════════════════
+   SEM FILTER
+════════════════════════════════════════════════ */
+.sem-filter {
+  display:flex; gap:.38rem; overflow-x:auto;
+  padding-bottom:.3rem; margin-bottom:.85rem;
+}
+.sem-filter::-webkit-scrollbar{ display:none; }
+.sem-chip {
   background:#fff; border:1.5px solid var(--border);
   border-radius:99px; padding:.28rem .72rem; font-size:.72rem;
   font-weight:700; color:var(--muted); cursor:pointer;
   transition:all .15s; white-space:nowrap;
   font-family:'Sora',sans-serif; flex-shrink:0;
 }
-.filter-chip.subject-active { background:var(--green); border-color:var(--green); color:#fff; }
+.sem-chip.active { background:var(--navy); border-color:var(--navy); color:#fff; }
 
-/* ═══════════════════════════════════════════════
+/* ════════════════════════════════════════════════
    CLASSES
-═══════════════════════════════════════════════ */
+════════════════════════════════════════════════ */
 .class-card {
   background:#fff; border-radius:16px;
   box-shadow:var(--shadow); overflow:hidden;
@@ -353,11 +273,6 @@ body { padding-bottom: 0; background: var(--bg); }
 .ch-dot.live { background:#4ade80; animation:blink 2s infinite; }
 .ch-dot.done { background:rgba(255,255,255,.3); }
 @keyframes blink{ 0%,100%{opacity:1}50%{opacity:.3} }
-
-.class-img {
-  width:100%; height:140px; object-fit:cover; display:block;
-}
-
 .class-body { padding:.82rem 1rem .9rem; }
 .class-desc { font-size:.77rem; color:var(--muted); line-height:1.6; margin-bottom:.65rem; }
 .class-meta { display:flex; gap:.4rem; flex-wrap:wrap; margin-bottom:.7rem; }
@@ -366,8 +281,6 @@ body { padding-bottom: 0; background: var(--bg); }
   background:#f1f5f9; border-radius:99px; padding:.2rem .55rem;
   font-size:.64rem; font-weight:600; color:var(--muted);
 }
-.c-meta-chip.subject { background:rgba(82,168,35,.1); color:var(--green2); }
-.c-meta-chip.degree  { background:rgba(27,58,92,.08); color:var(--navy); }
 .class-actions { display:flex; gap:.45rem; flex-wrap:wrap; }
 .class-actions .btn {
   padding:.52rem .75rem; font-size:.73rem;
@@ -378,14 +291,13 @@ body { padding-bottom: 0; background: var(--bg); }
   transition:transform .15s;
 }
 .class-actions .btn:hover { transform:translateY(-1px); }
-.btn-join   { background:linear-gradient(135deg,var(--green),var(--green2)); color:#fff; box-shadow:0 3px 10px rgba(82,168,35,.3); }
-.btn-rec    { background:linear-gradient(135deg,var(--navy),var(--navy2));   color:#fff; box-shadow:0 3px 10px rgba(27,58,92,.25); }
-.btn-notes  { background:linear-gradient(135deg,var(--gold),#e8921a);        color:#fff; box-shadow:0 3px 10px rgba(245,166,35,.3); }
-.btn-quiz-c { background:linear-gradient(135deg,#7c3aed,#5b21b6);            color:#fff; box-shadow:0 3px 10px rgba(124,58,237,.3); }
+.btn-join  { background:linear-gradient(135deg,var(--green),var(--green2)); color:#fff; box-shadow:0 3px 10px rgba(82,168,35,.3); }
+.btn-rec   { background:linear-gradient(135deg,var(--navy),var(--navy2));   color:#fff; box-shadow:0 3px 10px rgba(27,58,92,.25); }
+.btn-notes { background:linear-gradient(135deg,var(--gold),#e8921a);        color:#fff; box-shadow:0 3px 10px rgba(245,166,35,.3); }
 
-/* ═══════════════════════════════════════════════
+/* ════════════════════════════════════════════════
    QUIZ LIST
-═══════════════════════════════════════════════ */
+════════════════════════════════════════════════ */
 .quiz-list-card {
   background:#fff; border-radius:16px; box-shadow:var(--shadow);
   overflow:hidden; margin-bottom:.6rem;
@@ -412,9 +324,7 @@ body { padding-bottom: 0; background: var(--bg); }
   font-size:.63rem; font-weight:700; white-space:nowrap;
 }
 
-/* ═══════════════════════════════════════════════
-   ALL-TIME LEADERBOARD
-═══════════════════════════════════════════════ */
+/* All-time leaderboard on quiz tab */
 .lb-section-title {
   font-family:'Sora',sans-serif; font-weight:800;
   color:var(--navy); font-size:.88rem;
@@ -427,35 +337,6 @@ body { padding-bottom: 0; background: var(--bg); }
   font-weight:700; color:var(--navy); cursor:pointer;
   font-family:'Sora',sans-serif;
 }
-.lb-podium-row {
-  display:flex; gap:.5rem; overflow-x:auto;
-  padding-bottom:.4rem; margin-bottom:.65rem;
-}
-.lb-podium-row::-webkit-scrollbar{ display:none; }
-.lb-podium-card {
-  min-width:130px; flex-shrink:0;
-  border-radius:14px; padding:.8rem .75rem;
-  text-align:center; position:relative; overflow:hidden;
-}
-.lb-podium-card.p1 { background:linear-gradient(135deg,#f5a623,#e8921a); }
-.lb-podium-card.p2 { background:linear-gradient(135deg,#94a3b8,#64748b); }
-.lb-podium-card.p3 { background:linear-gradient(135deg,#cd7f32,#a0522d); }
-.lb-podium-medal { font-size:1.5rem; margin-bottom:.2rem; }
-.lb-podium-name {
-  font-family:'Sora',sans-serif; font-weight:800; color:#fff;
-  font-size:.78rem; line-height:1.3;
-  white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
-}
-.lb-podium-score {
-  font-family:'Sora',sans-serif; font-weight:800;
-  color:rgba(255,255,255,.9); font-size:1.35rem; line-height:1; margin:.2rem 0 .05rem;
-}
-.lb-podium-college { font-size:.58rem; color:rgba(255,255,255,.65); }
-.lb-podium-you {
-  position:absolute; top:.4rem; right:.4rem;
-  background:rgba(255,255,255,.25); border-radius:99px;
-  padding:.08rem .3rem; font-size:.52rem; font-weight:700; color:#fff;
-}
 .lb-item {
   background:#fff; border-radius:14px; padding:.65rem .85rem;
   box-shadow:0 2px 10px rgba(27,58,92,.07);
@@ -467,6 +348,9 @@ body { padding-bottom: 0; background: var(--bg); }
   font-family:'Sora',sans-serif; font-weight:800;
   font-size:.78rem; flex-shrink:0;
 }
+.lb-rank.r1{ background:linear-gradient(135deg,#f5a623,#e8921a); color:#fff; }
+.lb-rank.r2{ background:linear-gradient(135deg,#94a3b8,#64748b); color:#fff; }
+.lb-rank.r3{ background:linear-gradient(135deg,#cd7f32,#a0522d); color:#fff; }
 .lb-rank.rn{ background:#f1f5f9; color:var(--muted); }
 .lb-info { flex:1; }
 .lb-name { font-weight:600; font-size:.82rem; color:var(--navy); }
@@ -478,26 +362,28 @@ body { padding-bottom: 0; background: var(--bg); }
 .lb-score { font-family:'Sora',sans-serif; font-weight:800; font-size:1.05rem; color:var(--green); }
 .lb-score-quizzes { font-size:.58rem; color:var(--faint); text-align:right; }
 
-/* ═══════════════════════════════════════════════
-   CHAT
-═══════════════════════════════════════════════ */
+/* ════════════════════════════════════════════════
+   CHAT — FULL SCREEN FIX (Change 1)
+════════════════════════════════════════════════ */
 #chatWrap {
   position:fixed;
-  top:57px; left:0; right:0; bottom:57px;
-  z-index:100; background:var(--bg);
+  top:57px;   /* height of top nav */
+  left:0; right:0;
+  bottom:57px; /* height of bottom nav — KEY FIX */
+  z-index:100; /* BELOW bottom nav (9999) */
+  background:var(--bg);
   display:none; flex-direction:column;
   max-width:680px; margin:0 auto;
 }
 #chatWrap.active { display:flex; }
-@media(max-width:767px){
-  .top-nav { z-index:300; }
-}
 #chatBox {
   flex:1; overflow-y:auto; padding:1rem;
   display:flex; flex-direction:column; gap:.55rem;
 }
 #chatBox::-webkit-scrollbar{ width:3px; }
 #chatBox::-webkit-scrollbar-thumb{ background:var(--border); border-radius:99px; }
+
+/* bubbles */
 .msg-row { display:flex; gap:.4rem; animation:fadeUp .22s ease; }
 .msg-row.user { flex-direction:row-reverse; }
 .msg-av {
@@ -556,7 +442,6 @@ body { padding-bottom: 0; background: var(--bg); }
   background:#fff; border-top:1.5px solid var(--border);
   box-shadow:0 -3px 10px rgba(27,58,92,.07);
   padding:.5rem 1rem;
-  position:relative; z-index:2;
 }
 .chat-input-inner {
   max-width:680px; margin:0 auto;
@@ -581,48 +466,38 @@ body { padding-bottom: 0; background: var(--bg); }
 .send-btn:disabled { opacity:.45; transform:none; cursor:not-allowed; }
 .send-btn svg { width:16px; height:16px; fill:#fff; }
 
-/* ═══════════════════════════════════════════════
+/* ════════════════════════════════════════════════
    PROFILE
-═══════════════════════════════════════════════ */
-.profile-top-card {
+════════════════════════════════════════════════ */
+.profile-hero {
   background:linear-gradient(135deg,#1b3a5c,#254e7a);
-  border-radius:20px; padding:1.2rem 1.1rem;
-  margin-bottom:.75rem; display:flex; align-items:center; gap:1rem;
-  position:relative; overflow:hidden;
+  border-radius:20px; padding:1.5rem 1.2rem 1.3rem;
+  text-align:center; margin-bottom:1rem; position:relative; overflow:hidden;
 }
-.profile-top-card::after {
+.profile-hero::after {
   content:'🎓'; position:absolute; font-size:6rem;
   right:-0.5rem; bottom:-1rem; opacity:.07; pointer-events:none;
 }
 .p-avatar {
-  width:60px; height:60px; border-radius:50%; flex-shrink:0;
+  width:64px; height:64px; border-radius:50%;
   background:linear-gradient(135deg,var(--green),var(--green2));
   display:flex; align-items:center; justify-content:center;
-  font-size:1.6rem;
-  box-shadow:0 4px 14px rgba(82,168,35,.4);
+  font-size:1.7rem; margin:0 auto .7rem;
+  box-shadow:0 4px 16px rgba(82,168,35,.4);
   font-family:'Sora',sans-serif; font-weight:800; color:#fff;
 }
-.p-hero-info { flex:1; min-width:0; }
-.p-name { font-family:'Sora',sans-serif; font-weight:800; color:#fff; font-size:1rem;
-          white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
-.p-sub  { color:rgba(255,255,255,.55); font-size:.74rem; margin-top:.1rem; }
-.p-hero-actions { display:flex; flex-direction:column; gap:.4rem; flex-shrink:0; }
-.btn-p-edit {
-  border:none; border-radius:9px; padding:.42rem .72rem;
-  font-family:'Sora',sans-serif; font-weight:700; font-size:.7rem;
-  cursor:pointer; transition:all .15s; white-space:nowrap;
-  background:rgba(255,255,255,.15); color:#fff;
-  display:flex; align-items:center; gap:.25rem;
+.p-name { font-family:'Sora',sans-serif; font-weight:800; color:#fff; font-size:1.05rem; }
+.p-sub  { color:rgba(255,255,255,.55); font-size:.74rem; margin-top:.15rem; }
+.p-stats { display:grid; grid-template-columns:repeat(3,1fr); gap:.45rem; margin-top:.9rem; }
+.p-stat { background:rgba(255,255,255,.1); border-radius:10px; padding:.52rem .4rem; text-align:center; }
+.p-stat-n { font-family:'Sora',sans-serif; font-weight:800; color:var(--gold); font-size:1.25rem; line-height:1; }
+.p-stat-l { font-size:.55rem; color:rgba(255,255,255,.55); font-weight:600; text-transform:uppercase; letter-spacing:.03em; margin-top:.06rem; }
+.streak-badge {
+  display:inline-flex; align-items:center; gap:.35rem;
+  background:rgba(245,166,35,.15); border:1px solid rgba(245,166,35,.35);
+  border-radius:99px; padding:.28rem .82rem; margin-top:.6rem;
+  font-size:.7rem; font-weight:700; color:var(--gold); font-family:'Sora',sans-serif;
 }
-.btn-p-edit:hover { background:rgba(255,255,255,.25); }
-.btn-p-logout {
-  border:none; border-radius:9px; padding:.42rem .72rem;
-  font-family:'Sora',sans-serif; font-weight:700; font-size:.7rem;
-  cursor:pointer; transition:all .15s; white-space:nowrap;
-  background:rgba(239,68,68,.25); color:#fca5a5;
-  display:flex; align-items:center; gap:.25rem;
-}
-.btn-p-logout:hover { background:rgba(239,68,68,.4); }
 .profile-section {
   background:#fff; border-radius:16px; box-shadow:var(--shadow);
   padding:1rem 1.1rem; margin-bottom:.75rem;
@@ -639,6 +514,8 @@ body { padding-bottom: 0; background: var(--bg); }
 }
 .ps-label { font-size:.78rem; color:var(--muted); flex:1; }
 .ps-value { font-size:.8rem; font-weight:600; color:var(--text); }
+
+/* WhatsApp change button */
 .btn-wa-change {
   width:100%; border:none; border-radius:12px; padding:.82rem;
   background:linear-gradient(135deg,#25d366,#128c7e);
@@ -647,6 +524,16 @@ body { padding-bottom: 0; background: var(--bg); }
   box-shadow:0 4px 14px rgba(37,211,102,.3); transition:transform .15s; margin-bottom:.6rem;
 }
 .btn-wa-change:hover { transform:translateY(-1px); }
+.btn-logout {
+  width:100%; border:none; border-radius:12px; padding:.82rem;
+  background:linear-gradient(135deg,var(--red),#dc2626);
+  color:#fff; font-family:'Sora',sans-serif; font-weight:700; font-size:.88rem;
+  cursor:pointer; display:flex; align-items:center; justify-content:center; gap:.5rem;
+  box-shadow:0 4px 14px rgba(239,68,68,.28); transition:transform .15s;
+}
+.btn-logout:hover { transform:translateY(-1px); }
+
+/* sec title */
 .sec-title {
   font-family:'Sora',sans-serif; font-weight:800;
   color:var(--navy); font-size:.88rem; margin-bottom:.6rem;
@@ -679,16 +566,18 @@ body { padding-bottom: 0; background: var(--bg); }
   <!-- ══ HOME ══════════════════════════════════ -->
   <div class="page active" id="pageHome">
 
-    <!-- Greeting card -->
+    <!-- Greeting card — new layout -->
     <div class="greet-card">
       <h2>Namaste, <em id="greetName">Student</em>! 👋</h2>
       <p id="greetSub">Ready to learn something new today?</p>
       <div class="greet-stats-new">
+        <!-- Left: big ref count -->
         <div class="gs-big">
           <div class="gs-big-label">Referrals</div>
           <div class="gs-big-num" id="hRef">0</div>
           <div class="gs-big-sub">Friends invited</div>
         </div>
+        <!-- Right: quiz + class stacked -->
         <div class="gs-right">
           <div class="gs-small">
             <div class="gs-small-num" id="hQuiz">0</div>
@@ -698,23 +587,6 @@ body { padding-bottom: 0; background: var(--bg); }
             <div class="gs-small-num" id="hClass">0</div>
             <div class="gs-small-lbl">Class Count</div>
           </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- Referral share compact card -->
-    <div id="refShareCard" style="display:none;">
-      <div class="ref-share-card">
-        <div class="ref-share-icon">
-          <svg viewBox="0 0 24 24"><path d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5c-1.66 0-3 1.34-3 3s1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5C6.34 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z"/></svg>
-        </div>
-        <div class="ref-share-info">
-          <div class="ref-share-code" id="refCodeDisplay">—</div>
-          <div class="ref-share-sub">Your referral code · Share to invite!</div>
-        </div>
-        <div class="ref-share-btns">
-          <button class="btn-copy-sm" id="btnCopyRef" onclick="copyRefCode()">Copy</button>
-          <button class="btn-wa-sm" onclick="shareRefWA()">WA</button>
         </div>
       </div>
     </div>
@@ -752,19 +624,31 @@ body { padding-bottom: 0; background: var(--bg); }
       </a>
     </div>
 
-    <!-- My Referrals List -->
-    <div class="ref-list-section">
-      <div class="ref-list-header">
-        <div class="ref-list-title">
-          👥 My Referrals
-          <span class="ref-count-badge" id="refCountBadge">0</span>
+    <!-- Referral card -->
+    <div class="ref-card" id="refCard" style="display:none;">
+      <div class="ref-card-top">
+        <div class="ref-card-icon">
+          <svg viewBox="0 0 24 24"><path d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5c-1.66 0-3 1.34-3 3s1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5C6.34 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z"/></svg>
+        </div>
+        <div>
+          <div class="ref-card-title">Refer Friends 🎁</div>
+          <div class="ref-card-sub">Invite your college friends to join!</div>
         </div>
       </div>
-      <div id="homeRefList">
-        <div class="ref-empty">
-          <div class="ei">🔗</div>
-          <p>Abhi koi referral nahi hai.<br>Apna code share karo!</p>
+      <div class="ref-code-row">
+        <div class="ref-code-box" id="refCodeDisplay">—</div>
+        <button class="btn-copy" id="btnCopyRef" onclick="copyRefCode()">Copy</button>
+      </div>
+      <button class="btn-share-ref" onclick="shareRefWA()">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="white"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413z"/><path d="M12 0C5.373 0 0 5.373 0 12c0 2.126.553 4.121 1.522 5.857L.058 23.5l5.818-1.525A11.939 11.939 0 0 0 12 24c6.627 0 12-5.373 12-12S18.627 0 12 0z"/></svg>
+        Share on WhatsApp
+      </button>
+      <!-- Referred list -->
+      <div id="refListWrap" style="display:none; margin-top:.75rem;">
+        <div style="font-family:'Sora',sans-serif;font-weight:800;font-size:.78rem;color:var(--navy);margin-bottom:.4rem;">
+          Friends Joined 👥
         </div>
+        <div class="ref-list" id="refList"></div>
       </div>
     </div>
 
@@ -778,8 +662,16 @@ body { padding-bottom: 0; background: var(--bg); }
   <!-- ══ CLASSES ══════════════════════════════ -->
   <div class="page" id="pageClasses">
     <div class="sec-title">Your Classes</div>
-    <!-- Subject filter only — semester chips removed -->
-    <div class="filter-row" id="classSubjectFilter"></div>
+    <div class="sem-filter" id="classSemFilter">
+      <div class="sem-chip active" data-sem="user" onclick="filterClasses('user')">My Sem</div>
+      <div class="sem-chip" data-sem="all" onclick="filterClasses('all')">All</div>
+      <div class="sem-chip" data-sem="1" onclick="filterClasses('1')">Sem 1</div>
+      <div class="sem-chip" data-sem="2" onclick="filterClasses('2')">Sem 2</div>
+      <div class="sem-chip" data-sem="3" onclick="filterClasses('3')">Sem 3</div>
+      <div class="sem-chip" data-sem="4" onclick="filterClasses('4')">Sem 4</div>
+      <div class="sem-chip" data-sem="5" onclick="filterClasses('5')">Sem 5</div>
+      <div class="sem-chip" data-sem="6" onclick="filterClasses('6')">Sem 6</div>
+    </div>
     <div id="classListCont">
       <div class="empty-state"><div class="ei">⏳</div>Loading...</div>
     </div>
@@ -788,8 +680,16 @@ body { padding-bottom: 0; background: var(--bg); }
   <!-- ══ QUIZ ══════════════════════════════════ -->
   <div class="page" id="pageQuiz">
     <div class="sec-title">All Quizzes</div>
-    <!-- Subject filter only — semester chips removed -->
-    <div class="filter-row" id="quizSubjectFilter"></div>
+    <div class="sem-filter" id="quizSemFilter">
+      <div class="sem-chip active" data-sem="user" onclick="filterQuizzes('user')">My Sem</div>
+      <div class="sem-chip" data-sem="all" onclick="filterQuizzes('all')">All</div>
+      <div class="sem-chip" data-sem="1" onclick="filterQuizzes('1')">Sem 1</div>
+      <div class="sem-chip" data-sem="2" onclick="filterQuizzes('2')">Sem 2</div>
+      <div class="sem-chip" data-sem="3" onclick="filterQuizzes('3')">Sem 3</div>
+      <div class="sem-chip" data-sem="4" onclick="filterQuizzes('4')">Sem 4</div>
+      <div class="sem-chip" data-sem="5" onclick="filterQuizzes('5')">Sem 5</div>
+      <div class="sem-chip" data-sem="6" onclick="filterQuizzes('6')">Sem 6</div>
+    </div>
     <div id="quizListCont">
       <div class="empty-state"><div class="ei">⏳</div>Loading...</div>
     </div>
@@ -829,22 +729,21 @@ body { padding-bottom: 0; background: var(--bg); }
 
   <!-- ══ PROFILE ══════════════════════════════ -->
   <div class="page" id="pageProfile">
-    <div class="profile-top-card">
+    <div class="profile-hero">
       <div class="p-avatar" id="pAvatar">😊</div>
-      <div class="p-hero-info">
-        <div class="p-name" id="pName">—</div>
-        <div class="p-sub"  id="pSub">—</div>
+      <div class="p-name" id="pName">—</div>
+      <div class="p-sub"  id="pSub">—</div>
+      <div class="p-stats">
+        <div class="p-stat"><div class="p-stat-n" id="pScore">0</div><div class="p-stat-l">Score</div></div>
+        <div class="p-stat"><div class="p-stat-n" id="pQuiz">0</div><div class="p-stat-l">Quizzes</div></div>
+        <div class="p-stat"><div class="p-stat-n" id="pRef">0</div><div class="p-stat-l">Referrals</div></div>
       </div>
-      <div class="p-hero-actions">
-        <button class="btn-p-edit" onclick="requestChangeWA()">✏️ Edit</button>
-        <button class="btn-p-logout" onclick="doLogout()">🚪 Logout</button>
-      </div>
+      <div class="streak-badge" id="pStreak">🔥 1 day streak</div>
     </div>
 
     <div class="profile-section">
       <div class="ps-title">👤 Account Info</div>
       <div class="ps-row"><div class="ps-icon">📛</div><div class="ps-label">Full Name</div><div class="ps-value" id="piName">—</div></div>
-      <div class="ps-row"><div class="ps-icon">🎓</div><div class="ps-label">Degree</div><div class="ps-value" id="piDegree">—</div></div>
       <div class="ps-row"><div class="ps-icon">🏫</div><div class="ps-label">College</div><div class="ps-value" id="piCollege">—</div></div>
       <div class="ps-row"><div class="ps-icon">📚</div><div class="ps-label">Semester</div><div class="ps-value" id="piSem">—</div></div>
       <div class="ps-row"><div class="ps-icon">📱</div><div class="ps-label">Mobile</div><div class="ps-value" id="piMob">—</div></div>
@@ -852,40 +751,44 @@ body { padding-bottom: 0; background: var(--bg); }
       <div class="ps-row"><div class="ps-icon">🎁</div><div class="ps-label">Referral Code</div><div class="ps-value" id="piRefCode" style="font-weight:800;color:var(--green2);letter-spacing:.05em;">—</div></div>
     </div>
 
+    <!-- Change request via WhatsApp -->
     <button class="btn-wa-change" onclick="requestChangeWA()">
       💬 Request Profile Change on WhatsApp
     </button>
+    <button class="btn-logout" onclick="doLogout()">
+      🚪 Logout
+    </button>
   </div>
 
-  <!-- BOTTOM NAV — nav buttons only, no sidebar logo -->
-  <nav class="bottom-nav" id="bottomNav">
-    <button class="bn active" id="bn-home" data-label="Home" onclick="goTab('home')">
+  <!-- BOTTOM NAV — SVG icons (Change 2) -->
+  <nav class="bottom-nav">
+    <button class="bn active" id="bn-home" onclick="goTab('home')">
       <svg class="bn-ic" viewBox="0 0 24 24" fill="currentColor">
         <path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/>
       </svg>
       <span class="bn-lb">Home</span>
     </button>
-    <button class="bn" id="bn-classes" data-label="Classes" onclick="goTab('classes')">
+    <button class="bn" id="bn-classes" onclick="goTab('classes')">
       <svg class="bn-ic" viewBox="0 0 24 24" fill="currentColor">
         <path d="M12 3L1 9l11 6 9-4.91V17h2V9L12 3zm0 12.27L3.24 10 12 5.27 20.76 10 12 15.27zM5 13.18v4L12 21l7-3.82v-4L12 17l-7-3.82z"/>
       </svg>
       <span class="bn-lb">Classes</span>
     </button>
-    <button class="bn" id="bn-quiz" data-label="Quiz" onclick="goTab('quiz')">
+    <button class="bn" id="bn-quiz" onclick="goTab('quiz')">
       <svg class="bn-ic" viewBox="0 0 24 24" fill="currentColor">
         <path d="M9 21c0 .55.45 1 1 1h4c.55 0 1-.45 1-1v-1H9v1zm3-19C8.14 2 5 5.14 5 9c0 2.38 1.19 4.47 3 5.74V17c0 .55.45 1 1 1h6c.55 0 1-.45 1-1v-2.26c1.81-1.27 3-3.36 3-5.74 0-3.86-3.14-7-7-7zm2.85 11.1l-.85.6V16h-4v-2.3l-.85-.6C7.8 12.16 7 10.63 7 9c0-2.76 2.24-5 5-5s5 2.24 5 5c0 1.63-.8 3.16-2.15 4.1z"/>
       </svg>
       <span class="bn-lb">Quiz</span>
     </button>
-    <button class="bn" id="bn-chat" data-label="AI Chat" onclick="goTab('chat')">
+    <button class="bn" id="bn-chat" onclick="goTab('chat')">
       <svg class="bn-ic" viewBox="0 0 24 24" fill="currentColor">
         <path d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm0 14H6l-2 2V4h16v12z"/>
       </svg>
       <span class="bn-lb">AI Chat</span>
     </button>
-    <button class="bn" id="bn-profile" data-label="Profile" onclick="goTab('profile')">
+    <button class="bn" id="bn-profile" onclick="goTab('profile')">
       <svg class="bn-ic" viewBox="0 0 24 24" fill="currentColor">
-        <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/>
+        <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.34 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/>
       </svg>
       <span class="bn-lb">Profile</span>
     </button>
@@ -904,10 +807,6 @@ let chatHistory = [];
 let isBotTyping = false, chatInited = false, suggestionsShown = true;
 const LS_CHAT = 'cb_chat_v3';
 
-// Active subject filters
-let classActiveSubject = 'all';
-let quizActiveSubject  = 'all';
-
 // ════════════════════════════════════════════════
 //  BOOT
 // ════════════════════════════════════════════════
@@ -919,20 +818,13 @@ window.addEventListener('DOMContentLoaded', async () => {
   document.getElementById('loadingScreen').style.display = 'none';
   document.getElementById('app').style.display = 'block';
 
-  // Desktop: adjust chatWrap
-  if (window.innerWidth >= 768) {
-    document.getElementById('chatWrap').style.bottom = '0';
-    document.getElementById('chatWrap').style.left = '64px';
-  }
-
-  adjustChatWrapBounds();
-  window.addEventListener('resize', adjustChatWrapBounds);
-
+  // Load fresh profile (gets refCode + refList)
   loadProfile();
   loadClasses();
   loadQuizzes();
   loadAllTimeLB();
 
+  // Textarea auto-resize
   const ta = document.getElementById('userInput');
   ta.addEventListener('input', () => {
     ta.style.height = 'auto';
@@ -943,86 +835,66 @@ window.addEventListener('DOMContentLoaded', async () => {
   });
 });
 
-function adjustChatWrapBounds() {
-  const topNav    = document.querySelector('.top-nav');
-  const bottomNav = document.getElementById('bottomNav');
-  const chatWrap  = document.getElementById('chatWrap');
-  if (!chatWrap) return;
-  const topH      = topNav    ? topNav.offsetHeight    : 57;
-  const isDesktop = window.innerWidth >= 768;
-  const bottomH   = isDesktop ? 0 : (bottomNav ? bottomNav.offsetHeight : 57);
-  chatWrap.style.top    = topH    + 'px';
-  chatWrap.style.bottom = bottomH + 'px';
-  chatWrap.style.left   = isDesktop ? '64px' : '0';
-}
-
 // ════════════════════════════════════════════════
 //  FILL UI
 // ════════════════════════════════════════════════
 function fillUserUI(u) {
   const first = (u.name || 'Student').split(' ')[0];
-  document.getElementById('greetName').textContent  = first;
-  document.getElementById('topName').textContent    = 'Hi, ' + first + ' 👋';
-  document.getElementById('topStreak').textContent  = '🔥 ' + (u.loginStreak||1) + ' day' + ((u.loginStreak||1)>1?'s':'');
-  document.getElementById('hQuiz').textContent      = u.quizPlayed      || 0;
-  document.getElementById('hClass').textContent     = u.classesAttended || 0;
-  document.getElementById('hRef').textContent       = u.refCount        || 0;
-  document.getElementById('refCountBadge').textContent = u.refCount || 0;
+  document.getElementById('greetName').textContent = first;
+  document.getElementById('topName').textContent   = 'Hi, ' + first + ' 👋';
+  document.getElementById('topStreak').textContent = '🔥 ' + (u.loginStreak||1) + ' day' + ((u.loginStreak||1)>1?'s':'');
+  document.getElementById('hQuiz').textContent     = u.quizPlayed      || 0;
+  document.getElementById('hClass').textContent    = u.classesAttended || 0;
+  document.getElementById('hRef').textContent      = u.refCount        || 0;
 
-  document.getElementById('pName').textContent     = u.name    || '—';
-  document.getElementById('pSub').textContent      = (u.college||'') + ' · ' + (u.degree||'') + ' Sem ' + (u.semester||'—');
-  document.getElementById('piName').textContent    = u.name     || '—';
-  document.getElementById('piDegree').textContent  = u.degree   || '—';
-  document.getElementById('piCollege').textContent = u.college  || '—';
-  document.getElementById('piSem').textContent     = u.semester ? 'Semester ' + u.semester : '—';
-  document.getElementById('piMob').textContent     = u.mobile   || '—';
-  document.getElementById('piEmail').textContent   = u.email    || '—';
-  document.getElementById('piRefCode').textContent = u.refCode  || '—';
+  // Profile page
+  document.getElementById('pName').textContent    = u.name    || '—';
+  document.getElementById('pSub').textContent     = (u.college||'') + ' · Sem ' + (u.semester||'—');
+  document.getElementById('pScore').textContent   = u.totalScore  || 0;
+  document.getElementById('pQuiz').textContent    = u.quizPlayed  || 0;
+  document.getElementById('pRef').textContent     = u.refCount    || 0;
+  document.getElementById('pStreak').textContent  = '🔥 ' + (u.loginStreak||1) + ' day streak';
+  document.getElementById('piName').textContent   = u.name     || '—';
+  document.getElementById('piCollege').textContent= u.college  || '—';
+  document.getElementById('piSem').textContent    = u.semester ? 'Semester ' + u.semester : '—';
+  document.getElementById('piMob').textContent    = u.mobile   || '—';
+  document.getElementById('piEmail').textContent  = u.email    || '—';
+  document.getElementById('piRefCode').textContent= u.refCode  || '—';
 
-  document.getElementById('pAvatar').textContent = (u.name||'S').charAt(0).toUpperCase();
+  // Avatar
+  const av = document.getElementById('pAvatar');
+  av.textContent = (u.name||'S').charAt(0).toUpperCase();
 
+  // Greet sub
   const h = new Date().getHours();
   const greet = h<12?'Good morning':h<17?'Good afternoon':'Good evening';
   document.getElementById('greetSub').textContent = greet + ' — ready to learn something new today? 🚀';
 
+  // Referral card
   if (u.refCode) {
-    document.getElementById('refShareCard').style.display = 'block';
+    document.getElementById('refCard').style.display = 'block';
     document.getElementById('refCodeDisplay').textContent = u.refCode.toUpperCase();
+    // Render referred list
+    if (u.refList && u.refList.length > 0) {
+      document.getElementById('refListWrap').style.display = 'block';
+      const listEl = document.getElementById('refList');
+      listEl.innerHTML = '';
+      u.refList.forEach(r => {
+        listEl.innerHTML += `
+          <div class="ref-item">
+            <div class="ref-item-av">${(r.name||'?').charAt(0).toUpperCase()}</div>
+            <div>
+              <div class="ref-item-name">${esc(r.name)}</div>
+              <div class="ref-item-college">${esc(r.college||'')}</div>
+            </div>
+          </div>`;
+      });
+    }
   }
-
-  renderHomeRefList(u.refList || []);
-}
-
-function renderHomeRefList(refList) {
-  const cont = document.getElementById('homeRefList');
-  document.getElementById('refCountBadge').textContent = refList.length;
-  document.getElementById('hRef').textContent = refList.length;
-
-  if (!refList.length) {
-    cont.innerHTML = `<div class="ref-empty"><div class="ei">🔗</div><p>Abhi koi referral nahi hai.<br>Apna code share karo!</p></div>`;
-    return;
-  }
-  cont.innerHTML = '';
-  const grid = document.createElement('div');
-  grid.className = 'ref-cards-grid';
-  refList.forEach((r, i) => {
-    const card = document.createElement('div');
-    card.className = 'ref-student-card';
-    card.style.animationDelay = (i * 0.05) + 's';
-    card.innerHTML = `
-      <div class="ref-av">${(r.name||'?').charAt(0).toUpperCase()}</div>
-      <div class="ref-info">
-        <div class="ref-student-name">${esc(r.name)}</div>
-        <div class="ref-student-college">${esc(r.college||'')}</div>
-      </div>
-      <span class="ref-joined-badge">✓ Joined</span>`;
-    grid.appendChild(card);
-  });
-  cont.appendChild(grid);
 }
 
 // ════════════════════════════════════════════════
-//  LOAD PROFILE
+//  LOAD PROFILE (fresh from sheet)
 // ════════════════════════════════════════════════
 async function loadProfile() {
   try {
@@ -1062,68 +934,64 @@ function copyRefCode() {
   const code = (user.refCode || '').toUpperCase();
   navigator.clipboard.writeText(code).then(() => {
     const btn = document.getElementById('btnCopyRef');
-    btn.textContent = '✓';
+    btn.textContent = '✓ Copied!';
     btn.classList.add('copied');
     setTimeout(() => { btn.textContent='Copy'; btn.classList.remove('copied'); }, 2000);
   });
 }
+
 function shareRefWA() {
   const code = (user.refCode || '').toUpperCase();
   const link = window.location.origin + '/login/?ref=' + code;
-  const msg  = `🎓 *College Buddy* — Bihar ka Free Education Platform!\n\nClasses · Quiz · AI Study Buddy — sab free!\n\nMere referral code se join karo:\n🔗 ${link}\n\nCode: *${code}*\n\nKoi fees nahi! Abhi join karo 🚀`;
+  const msg  = `🎓 *College Buddy* — Bihar ka Free Education Platform!\n\n`+
+               `Classes · Quiz · AI Study Buddy — sab free!\n\n`+
+               `Mere referral code se join karo:\n`+
+               `🔗 ${link}\n\n`+
+               `Code: *${code}*\n\n`+
+               `Koi fees nahi! Abhi join karo 🚀`;
   window.open('https://wa.me/?text=' + encodeURIComponent(msg), '_blank');
 }
 
 // ════════════════════════════════════════════════
-//  CLASSES — backend filters by user's semester + degree
-//  No semester chips on frontend
+//  CLASSES — Change 4: default to user's semester
 // ════════════════════════════════════════════════
 async function loadClasses() {
   try {
-    // Pass user's exact semester and degree — backend does the filtering
-    const data = await apiGet({
-      action:   'getClasses',
-      semester: user.semester || '',
-      degree:   user.degree   || ''
-    });
+    const data = await apiGet({ action:'getClasses', semester:'all' });
     allClasses = data.classes || [];
-    buildClassSubjectChips();
-    renderClasses();
+    renderClasses('user'); // Change 4: default to user sem
+    // Upcoming strip on home
+    const uSem = String(user.semester || '');
+    const upcoming = allClasses.find(c => c.status==='upcoming' && String(c.semester)===uSem)
+                  || allClasses.find(c => c.status==='upcoming');
+    if (upcoming) {
+      // Could add a strip here if needed
+    }
   } catch(_) {
     document.getElementById('classListCont').innerHTML =
       '<div class="empty-state"><div class="ei">⚠️</div>Classes load nahi hue.</div>';
   }
 }
 
-function buildClassSubjectChips() {
-  const subjects = ['All', ...new Set(allClasses.map(c => c.subject).filter(Boolean))];
-  const cont = document.getElementById('classSubjectFilter');
-  cont.innerHTML = '';
-  subjects.forEach(s => {
-    const chip = document.createElement('div');
-    chip.className = 'filter-chip' + (s === 'All' ? ' subject-active' : '');
-    chip.dataset.subject = s;
-    chip.textContent = s === 'All' ? '📖 All Subjects' : s;
-    chip.onclick = () => {
-      classActiveSubject = s === 'All' ? 'all' : s;
-      cont.querySelectorAll('.filter-chip').forEach(c => c.classList.remove('subject-active'));
-      chip.classList.add('subject-active');
-      renderClasses();
-    };
-    cont.appendChild(chip);
-  });
+function filterClasses(sem) {
+  document.querySelectorAll('#classSemFilter .sem-chip').forEach(c =>
+    c.classList.toggle('active', c.dataset.sem === sem));
+  renderClasses(sem);
 }
 
-function renderClasses() {
+function renderClasses(sem) {
   const cont = document.getElementById('classListCont');
-  let list = allClasses;
-
-  if (classActiveSubject !== 'all') {
-    list = list.filter(c => c.subject === classActiveSubject);
+  let list;
+  if (sem === 'user') {
+    list = allClasses.filter(c => String(c.semester) === String(user.semester || ''));
+  } else if (sem === 'all') {
+    list = allClasses;
+  } else {
+    list = allClasses.filter(c => String(c.semester) === sem);
   }
 
   if (!list.length) {
-    cont.innerHTML = '<div class="empty-state"><div class="ei">📭</div>Is filter mein koi class nahi hai.</div>';
+    cont.innerHTML = '<div class="empty-state"><div class="ei">📭</div>Is semester mein koi class nahi hai.</div>';
     return;
   }
   cont.innerHTML = '';
@@ -1132,7 +1000,6 @@ function renderClasses() {
     const el   = document.createElement('div');
     el.className = 'class-card' + (done ? ' completed' : '');
     el.innerHTML = `
-      ${c.image ? `<img class="class-img" src="${esc(c.image)}" alt="${esc(c.title)}" onerror="this.style.display='none'"/>` : ''}
       <div class="class-hdr ${done?'completed':'upcoming'}">
         <span class="ch-badge">Sem ${esc(c.semester)}</span>
         <span class="ch-title">${esc(c.title)}</span>
@@ -1143,8 +1010,6 @@ function renderClasses() {
         <div class="class-meta">
           <span class="c-meta-chip">👨‍🏫 ${esc(c.teacher||'—')}</span>
           <span class="c-meta-chip">📅 ${esc(c.datetime||'—')}</span>
-          ${c.subject ? `<span class="c-meta-chip subject">📖 ${esc(c.subject)}</span>` : ''}
-          ${c.degree  ? `<span class="c-meta-chip degree">🎓 ${esc(c.degree)}</span>`  : ''}
           ${done
             ? '<span class="c-meta-chip" style="background:rgba(82,168,35,.1);color:var(--green2);">✅ Completed</span>'
             : '<span class="c-meta-chip" style="background:rgba(245,166,35,.1);color:#92400e;">⏰ Upcoming</span>'}
@@ -1153,7 +1018,6 @@ function renderClasses() {
           ${c.link      ? `<a href="${esc(c.link)}"      target="_blank" class="btn btn-join">📹 Join</a>` : ''}
           ${c.recording ? `<a href="${esc(c.recording)}" target="_blank" class="btn btn-rec">🎬 Recording</a>` : ''}
           ${c.notes     ? `<a href="${esc(c.notes)}"     target="_blank" class="btn btn-notes">📄 Notes</a>` : ''}
-          ${c.quizlink  ? `<a href="${esc(c.quizlink)}"  target="_blank" class="btn btn-quiz-c">📝 Quiz</a>` : ''}
         </div>
       </div>`;
     cont.appendChild(el);
@@ -1161,64 +1025,44 @@ function renderClasses() {
 }
 
 // ════════════════════════════════════════════════
-//  QUIZZES — backend filters by user's semester + degree
-//  No semester chips on frontend
+//  QUIZZES — Change 4: default to user's semester
 // ════════════════════════════════════════════════
 async function loadQuizzes() {
   try {
-    // Pass user's exact semester and degree — backend does the filtering
-    const data = await apiGet({
-      action:   'getAllQuizzes',
-      semester: user.semester || '',
-      degree:   user.degree   || ''
-    });
+    const data = await apiGet({ action:'getAllQuizzes', semester:'all' });
     allQuizzes = data.quizzes || [];
-    buildQuizSubjectChips();
-    renderQuizzes();
-    renderHomeQuizzes();
+    renderQuizzes('user'); // Change 4: default to user sem
+    // Home: recent 3 from user's semester
+    const cont = document.getElementById('homeQuizList');
+    cont.innerHTML = '';
+    const mySem = allQuizzes.filter(q => String(q.semester) === String(user.semester||''));
+    const recent = (mySem.length ? mySem : allQuizzes).slice(0, 3);
+    recent.forEach(q => cont.appendChild(buildQuizCard(q)));
+    if (!recent.length) cont.innerHTML = '<div class="empty-state"><div class="ei">📭</div>Koi quiz available nahi hai.</div>';
   } catch(_) {
     document.getElementById('quizListCont').innerHTML =
       '<div class="empty-state"><div class="ei">⚠️</div>Quizzes load nahi hue.</div>';
   }
 }
 
-function renderHomeQuizzes() {
-  const cont   = document.getElementById('homeQuizList');
-  const recent = allQuizzes.slice(0, 3);
-  cont.innerHTML = '';
-  recent.forEach(q => cont.appendChild(buildQuizCard(q)));
-  if (!recent.length) cont.innerHTML = '<div class="empty-state"><div class="ei">📭</div>Koi quiz available nahi hai.</div>';
+function filterQuizzes(sem) {
+  document.querySelectorAll('#quizSemFilter .sem-chip').forEach(c =>
+    c.classList.toggle('active', c.dataset.sem === sem));
+  renderQuizzes(sem);
 }
 
-function buildQuizSubjectChips() {
-  const subjects = ['All', ...new Set(allQuizzes.map(q => q.subject).filter(Boolean))];
-  const cont = document.getElementById('quizSubjectFilter');
-  cont.innerHTML = '';
-  subjects.forEach(s => {
-    const chip = document.createElement('div');
-    chip.className = 'filter-chip' + (s === 'All' ? ' subject-active' : '');
-    chip.dataset.subject = s;
-    chip.textContent = s === 'All' ? '📖 All Subjects' : s;
-    chip.onclick = () => {
-      quizActiveSubject = s === 'All' ? 'all' : s;
-      cont.querySelectorAll('.filter-chip').forEach(c => c.classList.remove('subject-active'));
-      chip.classList.add('subject-active');
-      renderQuizzes();
-    };
-    cont.appendChild(chip);
-  });
-}
-
-function renderQuizzes() {
+function renderQuizzes(sem) {
   const cont = document.getElementById('quizListCont');
-  let list   = allQuizzes;
-
-  if (quizActiveSubject !== 'all') {
-    list = list.filter(q => q.subject === quizActiveSubject);
+  let list;
+  if (sem === 'user') {
+    list = allQuizzes.filter(q => String(q.semester) === String(user.semester||''));
+  } else if (sem === 'all') {
+    list = allQuizzes;
+  } else {
+    list = allQuizzes.filter(q => String(q.semester) === sem);
   }
-
   if (!list.length) {
-    cont.innerHTML = '<div class="empty-state"><div class="ei">📭</div>Is filter mein koi quiz nahi hai.</div>';
+    cont.innerHTML = '<div class="empty-state"><div class="ei">📭</div>Is semester mein koi quiz nahi hai.</div>';
     return;
   }
   cont.innerHTML = '';
@@ -1235,14 +1079,14 @@ function buildQuizCard(q) {
     </div>
     <div class="qlc-info">
       <div class="qlc-title">${esc(q.title)}</div>
-      <div class="qlc-meta">Sem ${esc(q.semester)}${q.degree ? ' · ' + esc(q.degree) : ''}${q.subject ? ' · ' + esc(q.subject) : ''} · ${q.plays||0} plays</div>
+      <div class="qlc-meta">Sem ${esc(q.semester)} · ${q.plays||0} plays</div>
     </div>
     <span class="qlc-badge">Start →</span>`;
   return el;
 }
 
 // ════════════════════════════════════════════════
-//  ALL-TIME LEADERBOARD
+//  ALL-TIME LEADERBOARD (Change 7)
 // ════════════════════════════════════════════════
 async function loadAllTimeLB() {
   const cont = document.getElementById('allTimeLB');
@@ -1254,34 +1098,15 @@ async function loadAllTimeLB() {
       return;
     }
     cont.innerHTML = '';
-    const top = data.scores.slice(0, 10);
-
-    const podiumRow = document.createElement('div');
-    podiumRow.className = 'lb-podium-row';
-    const medals = ['🥇','🥈','🥉'];
-    const cls    = ['p1','p2','p3'];
-    top.slice(0, 3).forEach((s, i) => {
+    data.scores.slice(0, 20).forEach((s, i) => {
       const isYou = s.mobile === user.mobile;
-      const card  = document.createElement('div');
-      card.className = 'lb-podium-card ' + cls[i];
-      card.innerHTML = `
-        ${isYou ? '<div class="lb-podium-you">You</div>' : ''}
-        <div class="lb-podium-medal">${medals[i]}</div>
-        <div class="lb-podium-name">${esc(s.name)}</div>
-        <div class="lb-podium-score">${s.score}</div>
-        <div class="lb-podium-college">${esc(s.college||'')}</div>`;
-      podiumRow.appendChild(card);
-    });
-    cont.appendChild(podiumRow);
-
-    top.slice(3).forEach((s, i) => {
-      const isYou = s.mobile === user.mobile;
+      const rankCls = i===0?'r1':i===1?'r2':i===2?'r3':'rn';
       const el = document.createElement('div');
       el.className = 'lb-item';
       el.innerHTML = `
-        <div class="lb-rank rn">${i + 4}</div>
+        <div class="lb-rank ${rankCls}">${i+1}</div>
         <div class="lb-info">
-          <div class="lb-name">${esc(s.name)}${isYou ? '<span class="lb-you">You</span>' : ''}</div>
+          <div class="lb-name">${esc(s.name)}${isYou?'<span class="lb-you">You</span>':''}</div>
           <div class="lb-college">${esc(s.college||'')}</div>
         </div>
         <div style="text-align:right;">
@@ -1408,10 +1233,18 @@ function scrollChatBottom() { const cb=document.getElementById('chatBox'); setTi
 //  PROFILE ACTIONS
 // ════════════════════════════════════════════════
 function requestChangeWA() {
+  // Change 8: WhatsApp request button
   const u = user || {};
-  const msg = `Hi College Buddy Support 👋\n\nI want to request a profile change:\n\nName: ${u.name||'—'}\nMobile: ${u.mobile||'—'}\nCollege: ${u.college||'—'}\nDegree: ${u.degree||'—'}\nSemester: ${u.semester||'—'}\n\nChange I need: `;
+  const msg = `Hi College Buddy Support 👋\n\n`+
+              `I want to request a profile change:\n\n`+
+              `Name: ${u.name||'—'}\n`+
+              `Mobile: ${u.mobile||'—'}\n`+
+              `College: ${u.college||'—'}\n`+
+              `Semester: ${u.semester||'—'}\n\n`+
+              `Change I need: `;
   window.open('https://wa.me/919801907094?text=' + encodeURIComponent(msg), '_blank');
 }
+
 function doLogout() {
   if (!confirm('Logout karna chahte ho?')) return;
   clearUser();
@@ -1419,6 +1252,9 @@ function doLogout() {
   window.location.href = '../login/';
 }
 
+// ════════════════════════════════════════════════
+//  UTILS
+// ════════════════════════════════════════════════
 function timeNow() {
   return new Date().toLocaleTimeString('en-IN',{ hour:'2-digit', minute:'2-digit' });
 }

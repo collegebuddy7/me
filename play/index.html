@@ -543,7 +543,7 @@ window.addEventListener('DOMContentLoaded', async () => {
 
   try {
     setLoad('Loading Quiz...', quizName + '.csv pad rahi hai');
-    const csv = await fetchCSV('/' + quizName + '.csv');
+    const csv = await fetchCSV('..data/' + quizName + '.csv');
     questions  = parseCSV(csv);
     if (!questions.length) throw new Error('CSV mein koi valid question nahi mila.');
 

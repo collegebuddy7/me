@@ -7,13 +7,10 @@
 <link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700;800&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet"/>
 <link rel="stylesheet" href="../common.css"/>
 <style>
-/* ── PAGE-SPECIFIC ──────────────────────────────── */
 body { display:flex; align-items:center; justify-content:center;
        min-height:100vh; padding:1rem; }
-
 .login-wrap { width:100%; max-width:420px; }
 
-/* HERO CARD TOP */
 .login-hero {
   background: linear-gradient(140deg,#1b3a5c 0%,#254e7a 50%,#1a5e38 100%);
   border-radius:22px 22px 0 0; padding:2.2rem 1.5rem 2rem;
@@ -48,20 +45,16 @@ body { display:flex; align-items:center; justify-content:center;
 .login-hero h1 em { color:var(--gold); font-style:normal; }
 .login-hero p { color:rgba(255,255,255,.58); font-size:.78rem; margin-top:.28rem; }
 
-/* BODY CARD */
 .login-body {
   background:var(--white); border-radius:0 0 22px 22px;
   padding:1.75rem 1.5rem; box-shadow:var(--shadow-lg);
 }
-
-/* FOOTER NOTE */
 .login-foot { text-align:center; font-size:.72rem; color:var(--faint); margin-top:.8rem; }
 </style>
 </head>
 <body>
 
 <div class="login-wrap">
-  <!-- HERO -->
   <div class="login-hero">
     <img src="./cbdlogo.png" alt="College Buddy" class="hero-logo"
          onerror="this.outerHTML='<div style=\'font-family:Sora,sans-serif;font-weight:800;font-size:1.5rem;color:#fff;margin-bottom:.85rem\'>College<span style=\'color:#f5a623\'>Buddy</span></div>'"/>
@@ -73,7 +66,6 @@ body { display:flex; align-items:center; justify-content:center;
     <p>Classes · Quiz · AI Chat — sab ek jagah</p>
   </div>
 
-  <!-- BODY -->
   <div class="login-body">
     <div class="auth-tabs">
       <div class="auth-tab active" id="tabLogin"    onclick="switchTab('login')">🔑 Login</div>
@@ -109,6 +101,19 @@ body { display:flex; align-items:center; justify-content:center;
         <p class="et" id="eRName">Naam required hai.</p>
       </div>
       <div class="field">
+        <label class="lbl">Degree <span class="req">*</span></label>
+        <select id="rDegree" class="fi">
+          <option value="">-- Degree Select Karein --</option>
+          <option value="BCA">BCA (Bachelor of Computer Applications)</option>
+          <option value="BBA">BBA (Bachelor of Business Administration)</option>
+          <option value="BSc">BSc</option>
+          <option value="BCom">BCom</option>
+          <option value="BA">BA</option>
+          <option value="Other">Other</option>
+        </select>
+        <p class="et" id="eRDegree">Degree select karein.</p>
+      </div>
+      <div class="field">
         <label class="lbl">College <span class="req">*</span></label>
         <select id="rCollege" class="fi">
           <option value="">-- College Select Karein --</option>
@@ -138,6 +143,10 @@ body { display:flex; align-items:center; justify-content:center;
         <input type="tel" id="rMob" class="fi" placeholder="10-digit number" maxlength="10" inputmode="numeric"/>
         <p class="et" id="eRMob">Valid 10-digit number chahiye.</p>
       </div>
+      <div class="field">
+        <label class="lbl">Referral Code (optional)</label>
+        <input type="text" id="rRef" class="fi" placeholder="Friend ka referral code (optional)"/>
+      </div>
       <div class="field" style="margin-bottom:1.1rem;">
         <label class="lbl">Create Password <span class="req">*</span></label>
         <input type="password" id="rPass" class="fi" placeholder="Min 6 characters"/>
@@ -158,25 +167,30 @@ body { display:flex; align-items:center; justify-content:center;
 
 <script src="../common.js"></script>
 <script>
-// ── Populate dropdowns ────────────────────────────
+// Populate college dropdown
 const sel = document.getElementById('rCollege');
 COLLEGES.forEach(c => {
   const o = document.createElement('option');
   o.value = c; o.textContent = c; sel.appendChild(o);
 });
 
-// ── Redirect if already logged in ────────────────
+// Pre-fill ref code from URL ?ref=
+const _urlRef = new URLSearchParams(window.location.search).get('ref');
+if (_urlRef) {
+  document.getElementById('rRef').value = _urlRef;
+  switchTab('register');
+}
+
+// Redirect if already logged in
 const _existing = getUser();
 if (_existing) {
   const _next = new URLSearchParams(window.location.search).get('next');
   window.location.href = _next || '../dashboard/';
 }
 
-// ── Shared error helpers ─────────────────────────
 const fe = (id,v) => document.getElementById(id).classList.toggle('err',v);
 const se = (id,v) => document.getElementById(id).style.display = v ? 'block' : 'none';
 
-// ── Tab switcher ─────────────────────────────────
 function switchTab(tab) {
   const isLogin = tab === 'login';
   document.getElementById('tabLogin').classList.toggle('active', isLogin);
@@ -185,7 +199,6 @@ function switchTab(tab) {
   document.getElementById('registerForm').style.display = isLogin ? 'none'  : 'block';
 }
 
-// ── Login ─────────────────────────────────────────
 async function handleLogin() {
   const mob  = document.getElementById('lMob').value.trim();
   const pass = document.getElementById('lPass').value.trim();
@@ -208,36 +221,40 @@ async function handleLogin() {
   setBtnLoad('loginBtn','loginSpin','loginTxt',false);
 }
 
-// ── Register ──────────────────────────────────────
 async function handleRegister() {
   const name    = document.getElementById('rName').value.trim();
+  const degree  = document.getElementById('rDegree').value;
   const college = document.getElementById('rCollege').value;
   const sem     = document.getElementById('rSem').value;
   const email   = document.getElementById('rEmail').value.trim();
   const mob     = document.getElementById('rMob').value.trim();
   const pass    = document.getElementById('rPass').value.trim();
+  const ref     = document.getElementById('rRef').value.trim();
   let ok = true;
 
-  if (!name)                                   { fe('rName',true);    se('eRName',true);    ok=false; } else { fe('rName',false);    se('eRName',false); }
-  if (!college)                                { fe('rCollege',true); se('eRCollege',true); ok=false; } else { fe('rCollege',false); se('eRCollege',false); }
-  if (!sem)                                    { fe('rSem',true);     se('eRSem',true);     ok=false; } else { fe('rSem',false);     se('eRSem',false); }
+  if (!name)                                    { fe('rName',true);    se('eRName',true);    ok=false; } else { fe('rName',false);    se('eRName',false); }
+  if (!degree)                                  { fe('rDegree',true);  se('eRDegree',true);  ok=false; } else { fe('rDegree',false);  se('eRDegree',false); }
+  if (!college)                                 { fe('rCollege',true); se('eRCollege',true); ok=false; } else { fe('rCollege',false); se('eRCollege',false); }
+  if (!sem)                                     { fe('rSem',true);     se('eRSem',true);     ok=false; } else { fe('rSem',false);     se('eRSem',false); }
   if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)){ fe('rEmail',true);  se('eREmail',true);  ok=false; } else { fe('rEmail',false);  se('eREmail',false); }
-  if (!/^\d{10}$/.test(mob))                   { fe('rMob',true);     se('eRMob',true);     ok=false; } else { fe('rMob',false);     se('eRMob',false); }
-  if (pass.length < 6)                         { fe('rPass',true);    se('eRPass',true);    ok=false; } else { fe('rPass',false);    se('eRPass',false); }
+  if (!/^\d{10}$/.test(mob))                    { fe('rMob',true);     se('eRMob',true);     ok=false; } else { fe('rMob',false);     se('eRMob',false); }
+  if (pass.length < 6)                          { fe('rPass',true);    se('eRPass',true);    ok=false; } else { fe('rPass',false);    se('eRPass',false); }
   if (!ok) return;
 
   setBtnLoad('registerBtn','registerSpin','registerTxt',true);
   try {
     const params = new URLSearchParams({
-      action:'registerUser', name, college, semester:sem,
+      action:'registerUser', name, degree, college, semester:sem,
       email, mobile:mob, password:pass,
+      ref: ref || '',
       timestamp: now(),
     });
     const res  = await fetch(SHEET_URL + '?' + params.toString());
     const data = await res.json();
     if (data.status === 'ok') {
-      saveUser({ name, college, semester:sem, email, mobile:mob,
-                 totalScore:0, classesAttended:0, quizPlayed:0, loginStreak:1 });
+      saveUser({ name, degree, college, semester:sem, email, mobile:mob,
+                 totalScore:0, classesAttended:0, quizPlayed:0, loginStreak:1,
+                 refCode: data.user?.refCode || '' });
       showToast('Registration successful! 🎉','success');
       setTimeout(() => window.location.href = '../dashboard/', 900);
     } else {
@@ -247,14 +264,12 @@ async function handleRegister() {
   setBtnLoad('registerBtn','registerSpin','registerTxt',false);
 }
 
-// ── Helper: btn loading state ─────────────────────
 function setBtnLoad(btnId, spinId, txtId, loading) {
   document.getElementById(btnId).disabled       = loading;
   document.getElementById(spinId).style.display = loading ? 'block' : 'none';
   document.getElementById(txtId).style.display  = loading ? 'none'  : 'inline';
 }
 
-// ── Enter key support ─────────────────────────────
 document.addEventListener('keydown', e => {
   if (e.key !== 'Enter') return;
   const loginVisible = document.getElementById('loginForm').style.display !== 'none';
